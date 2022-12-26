@@ -76,7 +76,7 @@ async def on_message(message):
 
 @client.command()
 async def game_start(message,channel):
-    global games,channel_game
+    global games,channel_game,find
     if games:
         if channel_game != channel:
             await message.channel.send("you need to close your old game in the channel")
@@ -85,7 +85,7 @@ async def game_start(message,channel):
     else:
         games = True
         channel_game = channel
-        find = objects[int(random.uniform(0, 396))]
+        find = objects[int(random.uniform(0, 395))]
         print(find)
         await message.channel.send("What am i thinking ?")
 
