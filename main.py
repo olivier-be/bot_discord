@@ -89,4 +89,5 @@ async def game_start(message,channel):
         print(find)
         await message.channel.send("What am i thinking ?")
 
+
 client.run(private_key.discord_key) #discord api key
