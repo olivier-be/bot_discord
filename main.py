@@ -6,12 +6,14 @@ from discord.ext import commands
 import os
 import openai
 
-openai.organization = "org- openai org"
-openai.api_key = "api_key"
+import private_key
+
+openai.organization = private_key.openai_org #openai key with org-
+openai.api_key = private_key.openai_api_key #openai api key
+
 
 client = commands.Bot(command_prefix='!', intents=discord.Intents.all())
-objects = ["Mur", "Table", "Chaise", "Lampe", "Oreiller", "Canapé", "Plante", "Livre", "Radiateur", "Lit", "Lampe de chevet", "Tapis", "Papier peint", "Ventilateur", "Bureau", "Chaise de bureau", "Étagère", "Coussin", "Miroir", "Lampe de table", "Matelas", "Télévision", "Ordinateur", "Four", "Réfrigérateur", "Tableau", "Lave-linge", "Rideau", "Table basse", "Chaise longue", "Armoire", "Télécommande", "Placard", "Cheminée", "Lampe de sol", "Vase", "Lampe de bureau", "Cadre", "Radiocassette", "Four à micro-ondes", "Chaise de jardin", "Table de jardin", "Ascenseur", "Ascenseur", "Balançoire", "Chariot", "Tondeuse", "Bouilloire", "Robot ménager", "Machine à laver", "Stéréo", "Cassette vidéo", "Lecteur DVD", "Caméra", "Téléphone", "Télécopieur", "Ampoule", "Tondeuse à gazon", "Cuisine", "Climatiseur", "Réveil", "Verrou", "Horloge", "Porte", "Meuble", "Chaise haute", "Canapé-lit", "Lit bébé", "Scie", "Marteau", "Tournevis", "Clé", "Ciseaux", "Perceuse", "Cordon électrique", "Rouleau", "Clou", "Outils", "Brosse", "Aspirateur", "Ventilateur de plafond", "Platforme", "Planche à repasser", "Échelle", "Chaussures", "Vêtements", "Sac à dos", "Valise", "Boîte", "Sac", "Livres", "Jouets", "Jeux vidéo", "Batterie", "Souris", "Clavier", "Câble", "Tuyau", "Papier", "Stylo", "Craie", "Encrier", "Crayon", "Règle", "Gomme", "Cahier", "Sac à main", "Coffre-fort", "Ordinateur portable", "Imprimante", "Lampe de poche", "Bougeoir", "Couverture", "Bouquin", "Jouet en peluche"]
-
+objects =game.objects
 @client.event
 async def on_ready():
     print('Ready!')
@@ -19,12 +21,12 @@ async def on_ready():
     await client.change_presence(activity=discord.Game("I will spread toxicity throughout this server!"))
 
 games=False
-usergame=""
+channel_game= ""
 find=""
 @client.event
 
 async def on_message(message):
-    global objects,usergame,find,games
+    global objects,channel_game,find,games
     username=str(message.author).split('#')[0]
     message_content=str (message.content)
     channel=str(message.channel.name)
@@ -33,7 +35,7 @@ async def on_message(message):
         return
         await message.channel.send(response)
     elif ("feur") in message_content and not(games):
-        await message.channel.send("me ta gueule")
+        await message.channel.send("me ta gueule") # reponse in french to french bot feur
     elif ( "bot") in message.content :
         e = discord.Embed()
         e.set_thumbnail(url="https://media.tenor.com/8XNZFtwJxscAAAAC/reverse-card-uno.gif")
@@ -47,22 +49,12 @@ async def on_message(message):
         await message.channel.send("I am here")
     elif ("!version") in message_content:
         await message.channel.send("https://github.com/olivier-be/bot_discord/")
-        await message.channel.send("version 1.2 fair bot")
+        await message.channel.send("V1.2 fair bot")
     elif ("windows") in message_content:
         await message.channel.send("linux > ")
     elif ("!game") in message_content:
-        if games:
-            if usergame==username:
-                await message.channel.send("you need to close your old game")
-            else:
-                await message.channel.send("Une partie est deja en cour")
-        else:
-            games=True
-            usergame=username
-            find=objects[int(random.uniform(0,115))]
-            print(find)
-            await message.channel.send("Je pense à quoi ?")
-    elif  games and usergame==username:
+        await game_start(message, channel)
+    elif  games and channel_game==channel:
         if message_content=="end":
             games=False
             await message.channel.send("You can make better next time ")
@@ -73,7 +65,7 @@ async def on_message(message):
                 await message.channel.send("gg")
             else:
                 messager = openai.Completion.create(model="text-davinci-003",
-                                                    prompt="donne un indice sans la réponse qui permet de retrouver = "+find+ " avec comme dernière valeur donée"+message_content+" de plus informe le joueur si il est pret de trouver la réponse",
+                                                    prompt="give an hint without give responce for find  = "+find+ " with last word give "+message_content+" give information about if is close to find the word",
                                                     temperature=0, max_tokens=50)
                 await message.channel.send(messager['choices'][0]['text'])
     elif ("!stopgame") in message_content:
@@ -83,8 +75,18 @@ async def on_message(message):
 
 
 @client.command()
-async def toxic(ctx):
-    await ctx.send('I will spread toxicity throughout this server!')
-    
-    
-client.run('bot key')
+async def game_start(message,channel):
+    global games,channel_game
+    if games:
+        if channel_game != channel:
+            await message.channel.send("you need to close your old game in the channel")
+        else:
+            await message.channel.send("one game already run")
+    else:
+        games = True
+        channel_game = channel
+        find = objects[int(random.uniform(0, 396))]
+        print(find)
+        await message.channel.send("What am i thinking ?")
+
+client.run(private_key.discord_key) #discord api key
