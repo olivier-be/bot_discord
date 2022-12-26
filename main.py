@@ -40,6 +40,13 @@ async def on_message(message):
         e = discord.Embed()
         e.set_thumbnail(url="https://media.tenor.com/8XNZFtwJxscAAAAC/reverse-card-uno.gif")
         await message.channel.send(embed=e)
+    elif ("!openai_image") in message_content:
+        response = openai.Image.create(
+            prompt=message_content[13 : len(message_content)],
+            n=1,
+            size="1024x1024"
+        )
+        await message.channel.send(response['data'][0]['url'])
     elif ("!openai") in message_content:
         str1=message_content[7 : len(message_content)]
         messager= openai.Completion.create(model="text-davinci-003", prompt=str1, temperature=0, max_tokens=500)
