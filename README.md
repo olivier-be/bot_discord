@@ -2,7 +2,7 @@
 
 use openai 
 include one littel game 
-send reponse to bot feur 
+send reponse to feur bot 
 
 how use it ? 
 
