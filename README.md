@@ -20,7 +20,7 @@ and openai <br />
 create your discord bot on<br />
 https://discord.com/developers<br />
 and take api key from your openai account on <br />
-https://beta.openai.com/overview
+https://beta.openai.com/overview<br />
 click on account and choose api key <br />
 create new one <br />
 <br />
