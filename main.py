@@ -62,7 +62,7 @@ async def on_message(message):
 
 
 @client.command()
-async def spam(ctx, amount: int, size: int, message):
+async def spam(ctx, amount: int, size: int,*, message):
     if amount < 10000000 and size < 50:
         res = ""
         for e in range(size):
@@ -102,11 +102,11 @@ async def stopgame(ctx):
     games = False
     await ctx.channel.send("You Close the running game ")
 @client.command()
-async def clear_message(ctx,message):
-    if message.author.top_role.permissions.manage_messages:
-        await message.channel.purge(limit=100, check=True)
+async def clear_message(ctx,*,nb:int):
+    if ctx.author.top_role.permissions.manage_messages:# can give acces all to delete message
+        await ctx.channel.purge(limit=nb)
     else:
-        await message.send("test")
+        await ctx.channel.send("You don't have permissions to manage_messages")
 
 @client.command()
 async def Dalle2(ctx,*,message_content):

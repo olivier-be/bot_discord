@@ -40,8 +40,10 @@ in discord type: <br />
     -"!game" start game to find one word (one at time per bot and work on the initialised channel<br />
     -"!end" stop on the game on the channel <br />
     -"!stopgame" stop on the game ( work for all server connected)<br />
-    -"!openai" use text-davinci-003 to reponse <br />
-    -"!openai_image" use dalle-3 to send image generate<br />
+    -"!gpt3" use text-davinci-003 to reponse <br />
+    -"!Dalle2" use dalle-3 to send image generate<br />
+    -"!clear_message" take nb and delete nb message in channel. He need manage_messages permission to delete.<br />
+    -"!spam" take amount size message. he spam the channel with this setting<br />
    <br />
   <br />
   in one message:  <br />
