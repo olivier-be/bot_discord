@@ -1,7 +1,7 @@
 # bot_discord
 
 This bot use openai to make response , <br />
-I've make a littel game use openai to bennift for this feature <br />
+I've make a small game use openai to bennift for this feature <br />
 This bot make automatic reponse to feur bot <br />
 
 # Why made this bot 
