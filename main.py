@@ -42,17 +42,6 @@ async def on_message(message):
         e = discord.Embed()
         e.set_thumbnail(url="https://media.tenor.com/8XNZFtwJxscAAAAC/reverse-card-uno.gif")
         await message.channel.send(embed=e)
-    elif message_content[0:7] == "!openai":
-        messages = openai.Completion.create(model="text-davinci-003", prompt=message_content[7: size], temperature=0, max_tokens=500)
-        print(messages['choices'][0]['text'])
-        await message.channel.send(str(messages['choices'][0]['text']))
-    elif "!Dalle2" == message_content[0:13]:
-        response = openai.Image.create(
-            prompt=message_content[13: len(message_content)],
-            n=1,
-            size="1024x1024"
-        )
-        await message.channel.send(response['data'][0]['url'])
     elif "toxic" in message_content:
         await message.channel.send("I am here")
     elif "windows" in message_content:
@@ -82,9 +71,9 @@ async def spam(ctx, amount: int, size: int, message):
             await ctx.send(res)
     else:
         await ctx.send(message)
-
-
-async def game(message, channel):
+@client.command()
+async def game(message):
+    channel=message.channel
     global games, channel_game, find
     if games:
         if channel_game != channel:
@@ -97,19 +86,42 @@ async def game(message, channel):
         find = objects[int(random.uniform(0, 374))]
         print(find)
         await message.channel.send("What am i thinking ?")
+@client.command()
 async def version(ctx):
     await ctx.channel.send("https://github.com/olivier-be/bot_discord/")
     await ctx.channel.send("V1.2 fair bot")
+@client.command()
 async def end(ctx):
     global games
     games=False
     await ctx.channel.send("You can make better next time ")
+
+@client.command()
 async def stopgame(ctx):
     global games
     games = False
     await ctx.channel.send("You Close the running game ")
+@client.command()
+async def clear_message(ctx,message):
+    if message.author.top_role.permissions.manage_messages:
+        await message.channel.purge(limit=100, check=True)
+    else:
+        await message.send("test")
 
+@client.command()
+async def Dalle2(ctx,*,message_content):
+        response = openai.Image.create(
+            prompt=message_content,
+            n=1,
+            size="1024x1024"
+        )
+        await ctx.channel.send(response['data'][0]['url'])
 
+@client.command()
+async def gpt3(ctx,*,message_content):
+        messages = openai.Completion.create(model="text-davinci-003", prompt=message_content, temperature=0, max_tokens=500)
+        print(messages['choices'][0]['text'])
+        await ctx.channel.send(str(messages['choices'][0]['text']))
 
 
 
