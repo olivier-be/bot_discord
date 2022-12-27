@@ -34,33 +34,16 @@ async def on_message(message):
     print(f'{username}: {message_content} {channel}')
     if message.author == client.user:
         return
-    elif "feur" in message_content and not games:
+    elif "feur" == message_content and not games:
         await message.channel.send("me ta gueule")  # response in French to bot feur
     elif "bot" in message.content:
         e = discord.Embed()
         e.set_thumbnail(url="https://media.tenor.com/8XNZFtwJxscAAAAC/reverse-card-uno.gif")
         await message.channel.send(embed=e)
-    elif "!openai_image" in message_content:
-        response = openai.Image.create(
-            prompt=message_content[13: len(message_content)],
-            n=1,
-            size="1024x1024"
-        )
-        await message.channel.send(response['data'][0]['url'])
-    elif "!openai" in message_content:
-        str1 = message_content[7: len(message_content)]
-        messages = openai.Completion.create(model="text-davinci-003", prompt=str1, temperature=0, max_tokens=500)
-        print(messages['choices'][0]['text'])
-        await message.channel.send(str(messages['choices'][0]['text']))
     elif "toxic" in message_content:
         await message.channel.send("I am here")
-    elif "!version" in message_content:
-        await message.channel.send("https://github.com/olivier-be/bot_discord/")
-        await message.channel.send("V1.2 fair bot")
     elif "windows" in message_content:
         await message.channel.send("linux > ")
-    elif "!game" in message_content:
-        await game_start(message, channel)
     elif games and channel_game == channel:
         if message_content == "!end":
             games = False
@@ -77,10 +60,22 @@ async def on_message(message):
                 await message.channel.send(messages['choices'][0]['text'])
     elif "!stopgame" in message_content:
         games = False
+    await client.process_commands(message)
 
 
 @client.command()
-async def game_start(message, channel):
+async def spam(ctx, amount: int, size: int, message):
+    if amount < 10000000 and size < 50:
+        res = ""
+        for e in range(size):
+            res += message + " "
+        for i in range(amount):  # Do the next thing amount times
+            await ctx.send(res)
+    else:
+        await ctx.send(message)
+
+
+async def game(message, channel):
     global games, channel_game, find
     if games:
         if channel_game != channel:
@@ -93,6 +88,24 @@ async def game_start(message, channel):
         find = objects[int(random.uniform(0, 374))]
         print(find)
         await message.channel.send("What am i thinking ?")
+
+
+@client.command()
+async def gpt3(message, str1: str):
+    messages = openai.Completion.create(model="text-davinci-003", prompt=str1, temperature=0, max_tokens=500)
+    print(messages['choices'][0]['text'])
+    await message.channel.send(str(messages['choices'][0]['text']))
+async def version(ctx):
+    await ctx.channel.send("https://github.com/olivier-be/bot_discord/")
+    await ctx.channel.send("V1.2 fair bot")
+async def dalle_2(ctx,str1:str):
+    response = openai.Image.create(
+        prompt=str1,
+        n=1,
+        size="1024x1024"
+    )
+    await ctx.channel.send(response['data'][0]['url'])
+
 
 
 client.run(private_key.discord_key)  # discord api key
