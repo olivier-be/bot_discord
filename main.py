@@ -62,7 +62,7 @@ async def on_message(message):
     elif "!game" in message_content:
         await game_start(message, channel)
     elif games and channel_game == channel:
-        if message_content == "end":
+        if message_content == "!end":
             games = False
             await message.channel.send("You can make better next time ")
         else:
@@ -72,7 +72,7 @@ async def on_message(message):
                 await message.channel.send("gg")
             else:
                 messages = openai.Completion.create(model="text-davinci-003",
-                                                    prompt="give an hint without give responce for find  = " + find + "with last word give " + message_content + " give information about if is close to find the word",
+                                                    prompt="give an hint without give responce without " + find + " in thre reponse and the last word give " + message_content + " give information about if is close to find the word",
                                                     temperature=0, max_tokens=50)
                 await message.channel.send(messages['choices'][0]['text'])
     elif "!stopgame" in message_content:
@@ -90,7 +90,7 @@ async def game_start(message, channel):
     else:
         games = True
         channel_game = channel
-        find = objects[int(random.uniform(0, 395))]
+        find = objects[int(random.uniform(0, 374))]
         print(find)
         await message.channel.send("What am i thinking ?")
 
