@@ -46,7 +46,7 @@ async def on_message(message):
         messages = openai.Completion.create(model="text-davinci-003", prompt=message_content[7: size], temperature=0, max_tokens=500)
         print(messages['choices'][0]['text'])
         await message.channel.send(str(messages['choices'][0]['text']))
-    elif "!openai_image" == message_content[0:13]:
+    elif "!Dalle2" == message_content[0:13]:
         response = openai.Image.create(
             prompt=message_content[13: len(message_content)],
             n=1,
