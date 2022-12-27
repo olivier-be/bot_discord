@@ -32,7 +32,7 @@ now it work<br />
 <br />
 for work he need openai key and discord bot key<br />
 <br />
-# its functionality <br />
+# functionality <br />
 <br />
 in discord type: <br />
 <br />
