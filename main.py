@@ -31,15 +31,28 @@ async def on_message(message):
     username = str(message.author).split('#')[0]
     message_content = str(message.content)
     channel = str(message.channel.name)
+    size=len(message_content)-1
+
     print(f'{username}: {message_content} {channel}')
     if message.author == client.user:
         return
-    elif "feur" == message_content and not games:
+    elif "feur"==message_content and not games:
         await message.channel.send("me ta gueule")  # response in French to bot feur
     elif "bot" in message.content:
         e = discord.Embed()
         e.set_thumbnail(url="https://media.tenor.com/8XNZFtwJxscAAAAC/reverse-card-uno.gif")
         await message.channel.send(embed=e)
+    elif message_content[0:7] == "!openai":
+        messages = openai.Completion.create(model="text-davinci-003", prompt=message_content[7: size], temperature=0, max_tokens=500)
+        print(messages['choices'][0]['text'])
+        await message.channel.send(str(messages['choices'][0]['text']))
+    elif "!openai_image" == message_content[0:13]:
+        response = openai.Image.create(
+            prompt=message_content[13: len(message_content)],
+            n=1,
+            size="1024x1024"
+        )
+        await message.channel.send(response['data'][0]['url'])
     elif "toxic" in message_content:
         await message.channel.send("I am here")
     elif "windows" in message_content:
@@ -88,23 +101,9 @@ async def game(message, channel):
         find = objects[int(random.uniform(0, 374))]
         print(find)
         await message.channel.send("What am i thinking ?")
-
-
-@client.command()
-async def gpt3(message, str1: str):
-    messages = openai.Completion.create(model="text-davinci-003", prompt=str1, temperature=0, max_tokens=500)
-    print(messages['choices'][0]['text'])
-    await message.channel.send(str(messages['choices'][0]['text']))
 async def version(ctx):
     await ctx.channel.send("https://github.com/olivier-be/bot_discord/")
     await ctx.channel.send("V1.2 fair bot")
-async def dalle_2(ctx,str1:str):
-    response = openai.Image.create(
-        prompt=str1,
-        n=1,
-        size="1024x1024"
-    )
-    await ctx.channel.send(response['data'][0]['url'])
 
 
 
