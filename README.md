@@ -1,7 +1,7 @@
 # bot_discord
 
 This bot use openai to make response , <br />
-I've make a littel game use openai to bennift for this feature <br />
+I've make a small game use openai to bennift for this feature <br />
 This bot make automatic reponse to feur bot <br />
 
 # Why made this bot 
@@ -20,7 +20,7 @@ and openai <br />
 create your discord bot on<br />
 https://discord.com/developers<br />
 and take api key from your openai account on <br />
-https://beta.openai.com/overview
+https://beta.openai.com/overview<br />
 click on account and choose api key <br />
 create new one <br />
 <br />
@@ -32,7 +32,7 @@ now it work<br />
 <br />
 for work he need openai key and discord bot key<br />
 <br />
-# its functionality <br />
+# functionality <br />
 <br />
 in discord type: <br />
 <br />
