@@ -58,10 +58,7 @@ async def on_message(message):
     elif "windows" in message_content:
         await message.channel.send("linux > ")
     elif games and channel_game == channel:
-        if message_content == "!end":
-            games = False
-            await message.channel.send("You can make better next time ")
-        else:
+        if message_content != "!end":
             if message_content == find:
 
                 games = False
@@ -71,9 +68,8 @@ async def on_message(message):
                                                     prompt="give an hint without give answer without " + find + " in the answer and the last word give " + message_content + " give information about if is close to find the word",
                                                     temperature=0, max_tokens=50)
                 await message.channel.send(messages['choices'][0]['text'])
-    elif "!stopgame" in message_content:
-        games = False
-    await client.process_commands(message)
+    else:
+        await client.process_commands(message)
 
 
 @client.command()
@@ -104,6 +100,16 @@ async def game(message, channel):
 async def version(ctx):
     await ctx.channel.send("https://github.com/olivier-be/bot_discord/")
     await ctx.channel.send("V1.2 fair bot")
+async def end(ctx):
+    global games
+    games=False
+    await ctx.channel.send("You can make better next time ")
+async def stopgame(ctx):
+    global games
+    games = False
+    await ctx.channel.send("You Close the running game ")
+
+
 
 
 
