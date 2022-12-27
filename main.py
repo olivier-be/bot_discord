@@ -72,7 +72,7 @@ async def on_message(message):
                 await message.channel.send("gg")
             else:
                 messages = openai.Completion.create(model="text-davinci-003",
-                                                    prompt="give an hint without give responce without " + find + " in thre reponse and the last word give " + message_content + " give information about if is close to find the word",
+                                                    prompt="give an hint without give answer without " + find + " in the answer and the last word give " + message_content + " give information about if is close to find the word",
                                                     temperature=0, max_tokens=50)
                 await message.channel.send(messages['choices'][0]['text'])
     elif "!stopgame" in message_content:
