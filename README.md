@@ -50,7 +50,7 @@ in discord type: <br />
     -"bot" just don't use it <br />
     -"toxic" said "I am here"<br />
     -"windows" why you use it <br />
-    -"feur" anti-feur bot are better<br />
+    -"feur" counter feur bot are better<br />
     <br />
 Thanks for reading<br />
 Enjoy your bot !  <br />  
