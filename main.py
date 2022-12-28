@@ -101,7 +101,7 @@ async def stopgame(ctx):
     games = False
     await ctx.channel.send("You Close the running game ")
 @client.command()
-async def clear_message(ctx,*,nb:int):
+async def clear_message(ctx,nb:int):
     if ctx.author.top_role.permissions.manage_messages:# can give acces all to delete message
         await ctx.channel.purge(limit=nb)
     else:
@@ -121,7 +121,6 @@ async def gpt3(ctx,*,message_content):
         messages = openai.Completion.create(model="text-davinci-003", prompt=message_content, temperature=0, max_tokens=500)
         print(messages['choices'][0]['text'])
         await ctx.channel.send(str(messages['choices'][0]['text']))
-
 
 
 client.run(private_key.discord_key)  # discord api key
