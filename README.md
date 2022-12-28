@@ -4,7 +4,7 @@ This bot use openai to make response , <br />
 I've make a small game use openai to bennift for this feature <br />
 This bot make automatic reponse to feur bot <br />
 
-# Why made this bot 
+# Why code this bot 
 
 This bot was make for fun and discover discord bot and opeanai api. <br />
 
