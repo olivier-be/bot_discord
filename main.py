@@ -60,7 +60,7 @@ async def on_message(message):
         await client.process_commands(message)
 
 
-@client.command(fallback="get")
+@client.command()
 async def spam(ctx, amount: int, size: int,*, message):
     if amount < 10000000 and size < 50:
         res = ""
@@ -70,7 +70,7 @@ async def spam(ctx, amount: int, size: int,*, message):
             await ctx.send(res)
     else:
         await ctx.send(message)
-@client.command(fallback="get")
+@client.command()
 async def game(message):
     channel=message.channel
     global games, channel_game, find
@@ -85,11 +85,11 @@ async def game(message):
         find = objects[int(random.uniform(0, 374))]
         print(find)
         await message.channel.send("What am i thinking ?")
-@client.command(fallback="get")
+@client.command()
 async def version(ctx):
     await ctx.channel.send("https://github.com/olivier-be/bot_discord/")
     await ctx.channel.send("V1.2 fair bot")
-@client.command(fallback="get")
+@client.command()
 async def end(ctx):
     global games
     games=False
@@ -100,14 +100,14 @@ async def stopgame(ctx):
     global games
     games = False
     await ctx.channel.send("You Close the running game ")
-@client.command(fallback="get")
+@client.command()
 async def clear_message(ctx,*,nb:int):
     if ctx.author.top_role.permissions.manage_messages:# can give acces all to delete message
         await ctx.channel.purge(limit=nb)
     else:
         await ctx.channel.send("You don't have permissions to manage_messages")
 
-@client.command(fallback="get")
+@client.command()
 async def Dalle2(ctx,*,message_content):
         response = openai.Image.create(
             prompt=message_content,
@@ -116,19 +116,11 @@ async def Dalle2(ctx,*,message_content):
         )
         await ctx.channel.send(response['data'][0]['url'])
 
-@client.hybrid_group(name="gpt3",with_app_command=True,description="test",fallback="get")
+@client.command()
 async def gpt3(ctx,*,message_content):
         messages = openai.Completion.create(model="text-davinci-003", prompt=message_content, temperature=0, max_tokens=500)
         print(messages['choices'][0]['text'])
         await ctx.channel.send(str(messages['choices'][0]['text']))
-
-@client.hybrid_group(fallback="get")
-async def tag(ctx, name):
-    await ctx.send(f"Showing tag: {name}")
-
-@client.command()
-async def create(ctx, name):
-    await ctx.send(f"Created tag: {name}")
 
 
 
