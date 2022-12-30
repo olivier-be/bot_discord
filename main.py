@@ -88,7 +88,7 @@ async def game(message):
 @client.command()
 async def version(ctx):
     await ctx.channel.send("https://github.com/olivier-be/bot_discord/")
-    await ctx.channel.send("V1.2 fair bot")
+    await ctx.channel.send("V1.7 fair bot")
 @client.command()
 async def end(ctx):
     global games
