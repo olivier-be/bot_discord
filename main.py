@@ -15,7 +15,7 @@ url = 'https://api.github.com/repos/olivier-be/bot_discord/tags'
 response = requests.get(url)
 tag = response.json()
 
-if config["version"]["version"] != tag[-1]['name']:
+if config["version"]["version"] == tag[-1]['name']:
     print("last update install")
 else:
     print("update a available: {} to {}".format(config["version"]["version"],tag[-1]['name']))
@@ -141,7 +141,7 @@ async def gpt3(ctx,*,message_content):
 
 @client.command()
 async def update(ctx):
-    if config["version"]["version"] == tag[-1]['name']:
+    if config["version"]["version"] != tag[-1]['name']:
         await ctx.channel.send("update a available: {} to {}".format(config["version"]["version"], tag[-1]['name']))
         await ctx.channel.send("git pull recommend")
     else:
