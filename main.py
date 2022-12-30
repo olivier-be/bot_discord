@@ -6,17 +6,20 @@ import openai
 import configparser
 import requests
 
+config = configparser.ConfigParser()
+config.read('.editorconfig') #ouverture ficher config
+config.sections()
 
 # Make the request
 url = 'https://api.github.com/repos/olivier-be/bot_discord/tags'
 response = requests.get(url)
 tag = response.json()
 
-if configparser["version"]== tag[-1]['name']:
-    print("update a available: {} to {}".format(configparser["version"],tag[-1]['name']))
-    print("git pull recommend")
-else:
+if config["version"]["version"] != tag[-1]['name']:
     print("last update install")
+else:
+    print("update a available: {} to {}".format(config["version"]["version"],tag[-1]['name']))
+    print("git pull recommend")
 
 import private_key
 
@@ -138,11 +141,11 @@ async def gpt3(ctx,*,message_content):
 
 @client.command()
 async def update(ctx):
-    if configparser["version"] == tag[-1]['name']:
-        print("update a available: {} to {}".format(configparser["version"], tag[-1]['name']))
-        print("git pull recommend")
+    if config["version"]["version"] == tag[-1]['name']:
+        await ctx.channel.send("update a available: {} to {}".format(config["version"]["version"], tag[-1]['name']))
+        await ctx.channel.send("git pull recommend")
     else:
-        print("last update install")
+        await ctx.channel.send("last update install")
 
 
 client.run(private_key.discord_key)  # discord api key
