@@ -1,8 +1,8 @@
 # bot_discord
 
 This bot use openai to make response , <br />
-I've make a small game use openai to bennift for this feature <br />
-This bot make automatic reponse to feur bot <br />
+I've made a small game use openai to benefit for this feature <br />
+This bot make automatic repose to feur bot <br />
 
 # Why code this bot 
 
@@ -40,10 +40,12 @@ in discord type: <br />
     -"!game" start game to find one word (one at time per bot and work on the initialised channel<br />
     -"!end" stop on the game on the channel <br />
     -"!stopgame" stop on the game ( work for all server connected)<br />
-    -"!gpt3" use text-davinci-003 to reponse <br />
+    -"!gpt3" use text-davinci-003 to response <br />
     -"!Dalle2" use dalle-3 to send image generate<br />
     -"!clear_message" take nb and delete nb message in channel. He need manage_messages permission to delete.<br />
     -"!spam" take amount size message. he spam the channel with this setting<br />
+    -"!update" say if update are available<br />
+    -"!help" show commands<br />
    <br />
   <br />
   in one message:  <br />

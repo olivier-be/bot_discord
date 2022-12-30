@@ -3,6 +3,20 @@ import random
 import game
 from discord.ext import commands
 import openai
+import configparser
+import requests
+
+
+# Make the request
+url = 'https://api.github.com/repos/olivier-be/bot_discord/tags'
+response = requests.get(url)
+tag = response.json()
+
+if configparser["version"]== tag[-1]['name']:
+    print("update a available: {} to {}".format(configparser["version"],tag[-1]['name']))
+    print("git pull recommend")
+else:
+    print("last update install")
 
 import private_key
 
@@ -121,6 +135,14 @@ async def gpt3(ctx,*,message_content):
         messages = openai.Completion.create(model="text-davinci-003", prompt=message_content, temperature=0, max_tokens=500)
         print(messages['choices'][0]['text'])
         await ctx.channel.send(str(messages['choices'][0]['text']))
+
+@client.command()
+async def update(ctx):
+    if configparser["version"] == tag[-1]['name']:
+        print("update a available: {} to {}".format(configparser["version"], tag[-1]['name']))
+        print("git pull recommend")
+    else:
+        print("last update install")
 
 
 client.run(private_key.discord_key)  # discord api key
