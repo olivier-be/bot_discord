@@ -4,7 +4,7 @@ This bot use openai to make response , <br />
 I've make a small game use openai to bennift for this feature <br />
 This bot make automatic reponse to feur bot <br />
 
-# Why made this bot 
+# Why code this bot 
 
 This bot was make for fun and discover discord bot and opeanai api. <br />
 
@@ -50,7 +50,7 @@ in discord type: <br />
     -"bot" just don't use it <br />
     -"toxic" said "I am here"<br />
     -"windows" why you use it <br />
-    -"feur" anti-feur bot are better<br />
+    -"feur" counter feur bot are better<br />
     <br />
 Thanks for reading<br />
 Enjoy your bot !  <br />  
