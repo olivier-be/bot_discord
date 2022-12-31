@@ -1,15 +1,22 @@
+import time
+
 import discord
 import random
+
+from PIL._imaging import font
+
 import game
 from discord.ext import commands
 import openai
 import configparser
 import requests
+from os import getcwd
+from PIL import Image, ImageDraw,ImageFont
 
+path = getcwd()
 config = configparser.ConfigParser()
 config.read('.editorconfig') #ouverture ficher config
 config.sections()
-
 # Make the request
 url = 'https://api.github.com/repos/olivier-be/bot_discord/tags'
 response = requests.get(url)
@@ -146,6 +153,23 @@ async def update(ctx):
         await ctx.channel.send("git pull recommend")
     else:
         await ctx.channel.send("last update install")
+@client.command()
+async def avatar(message):
+    e = discord.Embed()
+    e.set_thumbnail(url=message.author.display_avatar)
+    await message.channel.send(embed=e)
 
+@client.command()
+async def quot(message,*,message_content:str):
+    global path
+    path_picture=path+"\\picture\\"+str(random.randint(1,2))+".png"
+    im = Image.open(path_picture)
+    pix = im.load()
+    draw = ImageDraw.Draw(im)
+    font1 = ImageFont.truetype("arial.ttf", int(im.size[0]*0.05))
+    draw.text((int(im.size[0]*0.10), (int(im.size[0]*0.10))), message_content, fill=(255, 255,255),font=font1)
+    im.save(path+"\\picture\\temp.png", "PNG")
+    final_picture=path+"\\picture\\temp.png"
+    await message.channel.send(file=discord.File(final_picture))
 
 client.run(private_key.discord_key)  # discord api key

@@ -22,6 +22,8 @@ discord.py <br />
 
 and openai <br />
 
+and Pillow <br />
+
 <br />
 
 create your discord bot on<br />
@@ -69,6 +71,8 @@ commandes:<br />
 -"!spam" take amount size message. He spam the channel with this setting<br />
 
 -"!update" say if update are available<br />
+
+-"!quot" send modify image with text send <br />
 
 -"!help" show commands<br />
 
