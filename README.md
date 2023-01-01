@@ -72,7 +72,9 @@ commandes:<br />
 
 -"!update" say if update are available<br />
 
--"!quot" send modify image with text send <br />
+-"!quot" edit image with text send <br />
+
+-"!avatar" sent avatar <br />
 
 -"!help" show commands<br />
 
