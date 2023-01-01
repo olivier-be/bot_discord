@@ -157,7 +157,7 @@ async def avatar(message):
     await message.channel.send(embed=e)
 
 @client.command()
-async def quot(message,*,message_content:str):
+async def quote(message,*,message_content:str):
     global path
     path_picture=path+"\\picture\\"+str(random.randint(1,2))+".png"
     im = Image.open(path_picture)
