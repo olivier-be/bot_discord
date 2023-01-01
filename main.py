@@ -57,7 +57,7 @@ async def on_message(message):
     if message.author == client.user:
         return
     elif "feur"==message_content and not games:
-        await message.channel.send("me ta gueule")  # response in French to bot feur
+        await message.channel.send("me ta gueule ")  # response in French to bot feur
     elif "bot" in message.content:
         e = discord.Embed()
         e.set_thumbnail(url="https://media.tenor.com/8XNZFtwJxscAAAAC/reverse-card-uno.gif")
@@ -66,7 +66,7 @@ async def on_message(message):
         await message.channel.send("I am here")
     elif "windows" in message_content:
         await message.channel.send("linux > ")
-    elif games and str(channel_game) == channel:
+    elif games and str(channel_game) == channel and message_content!="!end":
         if message_content != "!end":
             if message_content == find:
 
@@ -114,7 +114,7 @@ async def version(ctx):
 async def end(ctx):
     global games
     games=False
-    await ctx.channel.send("You can make better next time ")
+    await ctx.channel.send("You can make better next time "+ ctx.author.mention)
 
 @client.command()
 async def stopgame(ctx):
