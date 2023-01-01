@@ -66,12 +66,12 @@ async def on_message(message):
         await message.channel.send("I am here")
     elif "windows" in message_content:
         await message.channel.send("linux > ")
-    elif games and channel_game == channel:
+    elif games and str(channel_game) == channel:
         if message_content != "!end":
             if message_content == find:
 
                 games = False
-                await message.channel.send("gg")
+                await message.channel.send("gg "+message.author.mention)
             else:
                 messages = openai.Completion.create(model="text-davinci-003",
                                                     prompt="give an hint without give answer without " + find + " in the answer and the last word give " + message_content + " give information about if is close to find the word",
