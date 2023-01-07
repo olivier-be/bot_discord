@@ -1,4 +1,16 @@
 
 [version]
-version=V1.8
+version=V1.8.1
+
+[quote_picture]
+nb=2
+nb_file=2
+
+[1.png]
+nb_max_c=17
+nb_max_line=3
+
+[2.png]
+nb_max_c=15
+nb_max_line=1
 

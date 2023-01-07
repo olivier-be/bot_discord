@@ -58,7 +58,7 @@ async def on_message(message):
         return
     elif "feur"==message_content and not games:
         await message.channel.send("me ta gueule ")  # response in French to bot feur
-    elif "bot" in message.content:
+    elif " bot " in message.content:
         e = discord.Embed()
         e.set_thumbnail(url="https://media.tenor.com/8XNZFtwJxscAAAAC/reverse-card-uno.gif")
         await message.channel.send(embed=e)
@@ -156,15 +156,51 @@ async def avatar(message):
     e.set_thumbnail(url=message.author.display_avatar)
     await message.channel.send(embed=e)
 
+def separator(str_size,s,n):
+    if str_size > n - 1:
+        return n
+    elif (str_size < n and s[str_size] == " "):
+        return str_size
+    else :
+        u=0
+        i=0
+        while i<str_size:
+            if s[i]==" " :
+                u=i
+            i+=1
+
+        return u
+
+def find_picture(n):
+    tab=[]
+    for i in range (1,int(config["quote_picture"]["nb_file"])+1):
+        if (int(config[str(i)+".png"]["nb_max_line"])*int(config[str(i)+".png"]["nb_max_c"])>=n):
+            tab.append(str(i)+".png")
+    return tab
+
 @client.command()
 async def quote(message,*,message_content:str):
     global path
-    path_picture=path+"\\picture\\"+str(random.randint(1,2))+".png"
+    tab_pic_val=find_picture(len(message_content))
+    if tab_pic_val==[]:
+        name_picture = str(random.randint(1, int(config["quote_picture"]["nb"]))) + ".png"
+    else:
+        name_picture=random.choice(tab_pic_val)
+    path_picture=path+"\\picture\\"+name_picture
     im = Image.open(path_picture)
     pix = im.load()
     draw = ImageDraw.Draw(im)
-    font1 = ImageFont.truetype("arial.ttf", int(im.size[0]*0.05))
-    draw.text((int(im.size[0]*0.10), (int(im.size[0]*0.10))), message_content, fill=(255, 255,255),font=font1)
+    font1 = ImageFont.truetype("arial.ttf", int(im.size[0] * 0.04))
+    y=(int(im.size[0] * 0.10))
+    i=0
+    while i<int(config[name_picture]["nb_max_line"]):
+        str_size =int(config[name_picture]["nb_max_c"])
+        size=len(message_content)
+        n=separator(str_size,message_content,size)
+        draw.text((int(im.size[0] * 0.10), y), message_content[0:n], fill=(255, 255, 255), font=font1)
+        y+=int(im.size[0] * 0.04)
+        message_content=message_content[n:size]
+        i+=1
     im.save(path+"\\picture\\temp.png", "PNG")
     final_picture=path+"\\picture\\temp.png"
     await message.channel.send(file=discord.File(final_picture))
