@@ -193,6 +193,7 @@ async def quote(message,*,message_content:str):
     font1 = ImageFont.truetype("arial.ttf", int(im.size[0] * 0.04))
     y=(int(im.size[0] * 0.10))
     i=0
+
     while i<int(config[name_picture]["nb_max_line"]):
         str_size =int(config[name_picture]["nb_max_c"])
         size=len(message_content)
