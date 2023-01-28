@@ -74,7 +74,7 @@ async def on_message(message):
                 await message.channel.send("gg "+message.author.mention)
             else:
                 messages = openai.Completion.create(model="text-davinci-003",
-                                                    prompt="give an hint without give answer without " + find + " in the answer and the last word give " + message_content + " give information about if is close to find the word",
+                                                    prompt="The game is to make the word guess :" + find + ". In the answer the last answer give is : " + message_content + ". Dont say the word to guess ",
                                                     temperature=0, max_tokens=50)
                 await message.channel.send(messages['choices'][0]['text'])
     else:
@@ -112,15 +112,18 @@ async def version(ctx):
     await ctx.channel.send("{} fair bot".format(config["version"]["version"]))
 @client.command()
 async def end(ctx):
-    global games
-    games=False
-    await ctx.channel.send("You can make better next time "+ ctx.author.mention)
+    global games, channel_game
+    if game and ctx.channel==channel_game:
+        games=False
+        await ctx.channel.send("You can make better next time "+ ctx.author.mention)
+    else:
+        await ctx.channel.send("any game is running ont this channel")
 
 @client.command()
 async def stopgame(ctx):
     global games
     games = False
-    await ctx.channel.send("You Close the running game ")
+    await ctx.channel.send("You close the running game ")
 @client.command()
 async def clear_message(ctx,nb:int):
     if ctx.author.top_role.permissions.manage_messages:# can give acces all to delete message
