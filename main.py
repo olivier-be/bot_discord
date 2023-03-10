@@ -9,6 +9,9 @@ import configparser
 import requests
 from os import getcwd
 from PIL import Image, ImageDraw,ImageFont
+import private_key
+
+
 
 path = getcwd()
 config = configparser.ConfigParser()
@@ -25,13 +28,17 @@ else:
     print("update a available: {} to {}".format(config["version"]["version"],tag[0]['name']))
     print("git pull recommend")
 
-import private_key
+
 
 openai.organization = private_key.openai_org  # openai key with org-
 openai.api_key = private_key.openai_api_key  # openai api key
 
 client = commands.Bot(command_prefix='!', intents=discord.Intents.all())
 objects = game.objects
+
+current=None
+next=None
+eventlistH = (current, next)
 
 @client.event
 async def on_ready():
@@ -46,7 +53,7 @@ find = ""
 
 
 @client.event
-async def on_message(message):
+async def on_message(message): # look at all the messages
     global objects, channel_game, find, games
     username = str(message.author).split('#')[0]
     message_content = str(message.content)
@@ -92,7 +99,7 @@ async def spam(ctx, amount: int, size: int,*, message):
     else:
         await ctx.send(message)
 @client.command()
-async def game(message):
+async def game(message): # start game
     channel=message.channel
     global games, channel_game, find
     if games:
@@ -132,7 +139,7 @@ async def clear_message(ctx,nb:int):
         await ctx.channel.send("You don't have permissions to manage_messages")
 
 @client.command()
-async def Dalle2(ctx,*,message_content):
+async def Dalle2(ctx,*,message_content): # return picture form dalle 2
         response = openai.Image.create(
             prompt=message_content,
             n=1,
@@ -141,20 +148,20 @@ async def Dalle2(ctx,*,message_content):
         await ctx.channel.send(response['data'][0]['url'])
 
 @client.command()
-async def gpt3(ctx,*,message_content):
+async def gpt3(ctx,*,message_content): # write gpt chat response
         messages = openai.Completion.create(model="text-davinci-003", prompt=message_content, temperature=0, max_tokens=500)
         print(messages['choices'][0]['text'])
         await ctx.channel.send(str(messages['choices'][0]['text']))
 
 @client.command()
-async def update(ctx):
+async def update(ctx): # check update
     if config["version"]["version"] >= tag[0]['name']:
         await ctx.channel.send("last update install")
     else:
         await ctx.channel.send("update a available: {} to {}".format(config["version"]["version"], tag[0]['name']))
         await ctx.channel.send("git pull recommend")
 @client.command()
-async def avatar(message):
+async def avatar(message): #print avatar
     e = discord.Embed()
     e.set_thumbnail(url=message.author.display_avatar)
     await message.channel.send(embed=e)
@@ -174,7 +181,7 @@ def separator(str_size,s,n):
 
         return u
 
-def find_picture(n):
+def find_picture(n):  # randomly returns an image
     tab=[]
     for i in range (1,int(config["quote_picture"]["nb_file"])+1):
         if (int(config[str(i)+".png"]["nb_max_line"])*int(config[str(i)+".png"]["nb_max_c"])>=n):
@@ -182,7 +189,7 @@ def find_picture(n):
     return tab
 
 @client.command()
-async def quote(message,*,message_content:str):
+async def quote(message,*,message_content:str): #write word on image
     global path
     tab_pic_val=find_picture(len(message_content))
     if tab_pic_val==[]:
@@ -208,5 +215,9 @@ async def quote(message,*,message_content:str):
     im.save(path+"\\picture\\temp.png", "PNG")
     final_picture=path+"\\picture\\temp.png"
     await message.channel.send(file=discord.File(final_picture))
+
+
+
+
 
 client.run(private_key.discord_key)  # discord api key

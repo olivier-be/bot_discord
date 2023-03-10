@@ -1,6 +1,6 @@
 # bot_discord 
 
-This bot uses openai to make a response, <br />
+This bot uses openai to reply,, <br />
 
 I've made a small game use openai to benefit for this feature <br />
 
