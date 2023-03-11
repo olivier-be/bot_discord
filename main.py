@@ -1,5 +1,3 @@
-import time
-
 import discord
 import random
 import game
@@ -40,6 +38,8 @@ current=None
 next=None
 eventlistH = (current, next)
 
+games= []
+
 @client.event
 async def on_ready():
     print('Ready!')
@@ -47,24 +47,24 @@ async def on_ready():
     await client.change_presence(activity=discord.Game("I will spread toxicity throughout this server!"))
 
 
-games = False
-channel_game = ""
-find = ""
 
 
 @client.event
 async def on_message(message): # look at all the messages
-    global objects, channel_game, find, games
+    global objects, games
     username = str(message.author).split('#')[0]
     message_content = str(message.content)
     channel = str(message.channel.name)
     size=len(message_content)-1
 
     print(f'{username}: {message_content} {channel}')
+    i=0
+    while i < len(games) and ((games[i] != None and games[i][0] != channel)  or games[i] == None):
+        i += 1
+
     if message.author == client.user:
         return
-    elif "feur"==message_content and not games:
-        await message.channel.send("me ta gueule ")  # response in French to bot feur
+
     elif " bot " in message.content:
         e = discord.Embed()
         e.set_thumbnail(url="https://media.tenor.com/8XNZFtwJxscAAAAC/reverse-card-uno.gif")
@@ -73,17 +73,19 @@ async def on_message(message): # look at all the messages
         await message.channel.send("I am here")
     elif "windows" in message_content:
         await message.channel.send("linux > ")
-    elif games and str(channel_game) == channel and message_content!="!end":
-        if message_content != "!end":
-            if message_content == find:
 
-                games = False
+    elif i < len(games) and games[i] != None and games[i][0] == channel and message_content != "!end" :
+            if message_content == games[i][1]:
+
+                games[i]=None
                 await message.channel.send("gg "+message.author.mention)
             else:
                 messages = openai.Completion.create(model="text-davinci-003",
-                                                    prompt="The game is to make the word guess :" + find + ". In the answer the last answer give is : " + message_content + ". Dont say the word to guess ",
+                                                    prompt="The game is to make the word guess :" + games[i][1] + ". In the answer the last answer give is : " + message_content + ". Never say " + games[i][1],
                                                     temperature=0, max_tokens=50)
                 await message.channel.send(messages['choices'][0]['text'])
+    elif "feur"==message_content:  # response in French to bot feur
+        await message.channel.send("why ? ")
     else:
         await client.process_commands(message)
 
@@ -99,38 +101,58 @@ async def spam(ctx, amount: int, size: int,*, message):
     else:
         await ctx.send(message)
 @client.command()
-async def game(message): # start game
+async def Game(message): # start game
     channel=message.channel
-    global games, channel_game, find
-    if games:
-        if channel_game != channel:
-            await message.channel.send("you need to close your old game in the channel")
-        else:
-            await message.channel.send("one game already run")
-    else:
-        games = True
-        channel_game = channel
+    global games
+    isfind=False
+    i=0
+    while i<len(games) and games[i]!=None and games[i][0] != channel :
+            i+=1
+
+    if i == len(games):
         find = objects[int(random.uniform(0, 374))]
+        games.append((str(channel), find))
         print(find)
         await message.channel.send("What am i thinking ?")
+    elif games[i]!=None and games[i][0] == channel:
+        await message.channel.send("one game already run")
+    else:
+        find = objects[int(random.uniform(0, 374))]
+        games[i]=(str(channel), find)
+        print(find)
+        await message.channel.send("What am i thinking ?")
+
 @client.command()
 async def version(ctx):
     await ctx.channel.send("https://github.com/olivier-be/bot_discord/")
     await ctx.channel.send("{} fair bot".format(config["version"]["version"]))
 @client.command()
 async def end(ctx):
-    global games, channel_game
-    if game and ctx.channel==channel_game:
-        games=False
-        await ctx.channel.send("You can make better next time "+ ctx.author.mention)
-    else:
+    global games
+    channel=ctx.channel
+    i=0
+    while i<len(games) and (games[i]==None or games[i][0] != str(channel)) :
+            i+=1
+    if i == len(games):
         await ctx.channel.send("any game is running ont this channel")
+    else:
+        games[i]=None
+        await ctx.channel.send("You can make better next time "+ ctx.author.mention)
+
 
 @client.command()
 async def stopgame(ctx):
     global games
-    games = False
-    await ctx.channel.send("You close the running game ")
+    channel=ctx.channel
+    i=0
+    while i < len(games) and games[i] != None and games[i][0] != channel:
+        i += 1
+    if i == len(games):
+        await ctx.channel.send("any game is running ont this channel")
+    else:
+        games[i] = None
+        await ctx.channel.send("You close the running game ")
+
 @client.command()
 async def clear_message(ctx,nb:int):
     if ctx.author.top_role.permissions.manage_messages:# can give acces all to delete message
