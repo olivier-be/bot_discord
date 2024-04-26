@@ -5,22 +5,23 @@ from discord.ext import commands
 import openai
 import configparser
 import requests
-from os import getcwd
+#from os import getcwd
 from PIL import Image, ImageDraw,ImageFont
-#import private_key
+import private_key
 
 
 
-path = "/home/ubuntu/bot_discord/"
+path =  private_key.path
 config = configparser.ConfigParser()
-config.read('/home/ubuntu/bot_discord/.editorconfig') #ouverture ficher config
+print(path + '.editorconfig')
+config.read(path + '.editorconfig') #ouverture ficher config
 config.sections()
 # Make the request
 url = 'https://api.github.com/repos/olivier-be/bot_discord/tags'
 response = requests.get(url)
 tag = response.json()
 
-if config["version"]["version"] >= tag[0]['name']:
+if True: # config["version"]["version"] >= tag[0]['name']:
     print("last update install")
 else:
     print("update a available: {} to {}".format(config["version"]["version"],tag[0]['name']))
