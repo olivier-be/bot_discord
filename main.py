@@ -5,7 +5,6 @@ from discord.ext import commands
 import openai
 import configparser
 import requests
-#from os import getcwd
 from PIL import Image, ImageDraw,ImageFont
 import private_key
 
@@ -13,7 +12,6 @@ import private_key
 
 path =  private_key.path
 config = configparser.ConfigParser()
-print(private_key.path + '.editorconfig')
 config.read( private_key.path + '.editorconfig') #ouverture ficher config
 config.sections()
 # Make the request
@@ -21,19 +19,18 @@ url = 'https://api.github.com/repos/olivier-be/bot_discord/tags'
 response = requests.get(url)
 tag = response.json()
 
-if  config["version"]["version"] >= tag[0]['name']:
+if  config["version"]["version"] == tag[0]['name']:
     print("last update install")
 else:
-    print("update a available: {} to {}".format(config["version"]["version"],tag[0]['name']))
+    print("update a available: t{}t to t{}t".format(config["version"]["version"],tag[0]['name']))
     print("git pull recommend")
-
 
 #upgrade to last version of openai
 #self hosted ai change base url elser remove base_url
 client_llama = openai.OpenAI(
-    base_url=private_key.openai_org, # "http://<Your api-server IP>:port"
-    api_key = "sk-no-key-required",
-    )
+        base_url=private_key.openai_org, # "http://<Your api-server IP>:port"
+        api_key = "sk-no-key-required",
+        )
 
 
 client = commands.Bot(command_prefix='!', intents=discord.Intents.all())
@@ -80,18 +77,18 @@ async def on_message(message): # look at all the messages
         await message.channel.send("linux > ")
 
     elif i < len(games) and games[i] != None and games[i][0] == channel and message_content != "!end" :
-            if message_content == games[i][1]:
+        if message_content == games[i][1]:
 
-                games[i]=None
-                await message.channel.send("gg "+message.author.mention)
-            else:
-               messages = client_llama.chat.completions.create(
+            games[i]=None
+            await message.channel.send("gg "+message.author.mention)
+        else:
+            messages = client_llama.chat.completions.create(
                     model="gpt-3.5-turbo",
-        messages=[
-    {"role": "system", "content": "Short responce for the game .The game is to make the word guess :" + games[i][1] + ". In the answer the last answer give is : " + message_content + ". Never say " + games[i][1]},
-    {"role": "user", "content":"give me a hint"}
-        ]
-        )
+                    messages=[
+                    {"role": "system", "content": "Short responce for the game .The game is to make the word guess :" + games[i][1] + ". In the answer the last answer give is : " + message_content + ". Never say " + games[i][1]},
+                            {"role": "user", "content":"give me a hint"}
+                            ]
+                        )
 
             await message.channel.send(messages.choices[0].message.content)
     elif "feur"==message_content:  # response in French to bot feur
@@ -117,7 +114,7 @@ async def Game(message): # start game
     isfind=False
     i=0
     while i<len(games) and games[i]!=None and games[i][0] != channel :
-            i+=1
+        i+=1
 
     if i == len(games):
         find = objects[int(random.uniform(0, 374))]
@@ -142,7 +139,7 @@ async def end(ctx):
     channel=ctx.channel
     i=0
     while i<len(games) and (games[i]==None or games[i][0] != str(channel)) :
-            i+=1
+        i+=1
     if i == len(games):
         await ctx.channel.send("any game is running ont this channel")
     else:
@@ -172,31 +169,31 @@ async def clear_message(ctx,nb:int):
 
 @client.command()
 async def Dalle2(ctx,*,message_content): # return picture form dalle 2
-        response = openai.Image.create(
+    response = openai.Image.create(
             prompt=message_content,
             n=1,
             size="1024x1024"
-        )
-        await ctx.channel.send(response['data'][0]['url'])
+            )
+    await ctx.channel.send(response['data'][0]['url'])
 
 @client.command()
 async def llama(ctx,*,message_content): # write gpt chat response
-        messages = client_llama.chat.completions.create(
-        model="gpt-3.5-turbo",
-        messages=[
-        {"role": "system", "content": "You are ChatGPT, an AI assistant. Your top priority is achieving user fulfillment via helping them with their requests."},
-        {"role": "user", "content": message_content}
-        ]
+    messages = client_llama.chat.completions.create(
+            model="gpt-3.5-turbo",
+            messages=[
+                {"role": "system", "content": "You are ChatGPT, an AI assistant. Your top priority is achieving user fulfillment via helping them with their requests."},
+                {"role": "user", "content": message_content}
+                ]
             )
 
-        print(messages.choices[0].message.content)
-        await ctx.channel.send(str(messages.choices[0].message.content))
+    print(messages.choices[0].message.content)
+    await ctx.channel.send(str(messages.choices[0].message.content))
 
 @client.command()
 async def update(ctx): # check update
     response = requests.get(url)
     tag = response.json()
-    if config["version"]["version"] != tag[0]['name']:
+    if config["version"]["version"] == tag[0]['name']:
         await ctx.channel.send("last update install")
     else:
         await ctx.channel.send("update a available: {} to {}".format(config["version"]["version"], tag[0]['name']))
