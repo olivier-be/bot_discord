@@ -7,13 +7,13 @@ import configparser
 import requests
 from os import getcwd
 from PIL import Image, ImageDraw,ImageFont
-import private_key
+#import private_key
 
 
 
-path = getcwd()
+path = "/home/ubuntu/bot_discord/"
 config = configparser.ConfigParser()
-config.read('.editorconfig') #ouverture ficher config
+config.read('/home/ubuntu/bot_discord/.editorconfig') #ouverture ficher config
 config.sections()
 # Make the request
 url = 'https://api.github.com/repos/olivier-be/bot_discord/tags'
@@ -27,9 +27,13 @@ else:
     print("git pull recommend")
 
 
+#upgrade to last version of openai
+#self hosted ai change base url elser remove base_url
+client_llama = openai.OpenAI(
+    base_url=private_key.openai_org, # "http://<Your api-server IP>:port"
+    api_key = "sk-no-key-required",
+    )
 
-openai.organization = private_key.openai_org  # openai key with org-
-openai.api_key = private_key.openai_api_key  # openai api key
 
 client = commands.Bot(command_prefix='!', intents=discord.Intents.all())
 objects = game.objects
@@ -80,10 +84,15 @@ async def on_message(message): # look at all the messages
                 games[i]=None
                 await message.channel.send("gg "+message.author.mention)
             else:
-                messages = openai.Completion.create(model="text-davinci-003",
-                                                    prompt="The game is to make the word guess :" + games[i][1] + ". In the answer the last answer give is : " + message_content + ". Never say " + games[i][1],
-                                                    temperature=0, max_tokens=50)
-                await message.channel.send(messages['choices'][0]['text'])
+               messages = client_llama.chat.completions.create(
+                    model="gpt-3.5-turbo",
+        messages=[
+    {"role": "system", "content": "Short responce for the game .The game is to make the word guess :" + games[i][1] + ". In the answer the last answer give is : " + message_content + ". Never say " + games[i][1]},
+    {"role": "user", "content":"give me a hint"}
+        ]
+        )
+
+            await message.channel.send(messages.choices[0].message.content)
     elif "feur"==message_content:  # response in French to bot feur
         await message.channel.send("why ? ")
     else:
@@ -170,10 +179,17 @@ async def Dalle2(ctx,*,message_content): # return picture form dalle 2
         await ctx.channel.send(response['data'][0]['url'])
 
 @client.command()
-async def gpt3(ctx,*,message_content): # write gpt chat response
-        messages = openai.Completion.create(model="text-davinci-003", prompt=message_content, temperature=0, max_tokens=500)
-        print(messages['choices'][0]['text'])
-        await ctx.channel.send(str(messages['choices'][0]['text']))
+async def llama(ctx,*,message_content): # write gpt chat response
+        messages = client_llama.chat.completions.create(
+        model="gpt-3.5-turbo",
+        messages=[
+        {"role": "system", "content": "You are ChatGPT, an AI assistant. Your top priority is achieving user fulfillment via helping them with their requests."},
+        {"role": "user", "content": message_content}
+        ]
+            )
+
+        print(messages.choices[0].message.content)
+        await ctx.channel.send(str(messages.choices[0].message.content))
 
 @client.command()
 async def update(ctx): # check update
@@ -218,7 +234,7 @@ async def quote(message,*,message_content:str): #write word on image
         name_picture = str(random.randint(1, int(config["quote_picture"]["nb"]))) + ".png"
     else:
         name_picture=random.choice(tab_pic_val)
-    path_picture=path+"\\picture\\"+name_picture
+    path_picture=path+"/picture/"+name_picture
     im = Image.open(path_picture)
     pix = im.load()
     draw = ImageDraw.Draw(im)
@@ -234,8 +250,8 @@ async def quote(message,*,message_content:str): #write word on image
         y+=int(im.size[0] * 0.04)
         message_content=message_content[n:size]
         i+=1
-    im.save(path+"\\picture\\temp.png", "PNG")
-    final_picture=path+"\\picture\\temp.png"
+    im.save(path+"/picture/temp.png", "PNG")
+    final_picture=path+"/picture/temp.png"
     await message.channel.send(file=discord.File(final_picture))
 
 
