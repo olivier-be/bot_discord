@@ -30,13 +30,16 @@ create your discord bot on<br />
 
 https://discord.com/developers<br />
 
-and take api key from your openai account on <br />
+1 take api key from your openai account on <br />
 
 https://beta.openai.com/overview<br />
 
 click on account and choose api key <br />
 
 create new one <br />
+2 
+self hosted ai with llama.cpp[https://github.com/ggerganov/llama.cpp]
+change base_url of client_llama in main.py
 
 <br />
 
