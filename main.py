@@ -13,15 +13,15 @@ import private_key
 
 path =  private_key.path
 config = configparser.ConfigParser()
-print(path + '.editorconfig')
-config.read(path + '.editorconfig') #ouverture ficher config
+print(private_key.path + '.editorconfig')
+config.read( private_key.path + '.editorconfig') #ouverture ficher config
 config.sections()
 # Make the request
 url = 'https://api.github.com/repos/olivier-be/bot_discord/tags'
 response = requests.get(url)
 tag = response.json()
 
-if True: # config["version"]["version"] >= tag[0]['name']:
+if  config["version"]["version"] >= tag[0]['name']:
     print("last update install")
 else:
     print("update a available: {} to {}".format(config["version"]["version"],tag[0]['name']))
@@ -194,7 +194,9 @@ async def llama(ctx,*,message_content): # write gpt chat response
 
 @client.command()
 async def update(ctx): # check update
-    if config["version"]["version"] >= tag[0]['name']:
+    response = requests.get(url)
+    tag = response.json()
+    if config["version"]["version"] != tag[0]['name']:
         await ctx.channel.send("last update install")
     else:
         await ctx.channel.send("update a available: {} to {}".format(config["version"]["version"], tag[0]['name']))
