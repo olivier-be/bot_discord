@@ -187,7 +187,13 @@ async def llama(ctx,*,message_content): # write gpt chat response
             )
 
     print(messages.choices[0].message.content)
-    await ctx.channel.send(str(messages.choices[0].message.content))
+    p = 0
+    s = str(messages.choices[0].message.content)
+    n = len(s)
+    while p + 2000 < n:
+        await ctx.channel.send(s[p:2000])
+        p += 2000;
+    await ctx.channel.send(s[p:]) 
 
 @client.command()
 async def update(ctx): # check update
