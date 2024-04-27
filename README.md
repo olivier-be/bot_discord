@@ -1,6 +1,7 @@
 # bot_discord 
 
 This bot uses openai to reply,, <br />
+This bot uses docker-compose to make a mincraft server,, <br />
 
 I've made a small game use openai to benefit for this feature <br />
 
@@ -8,10 +9,11 @@ This bot makes automatic repose to feur bot <br />
 
 # Why code this bot 
 
-This bot was made for fun and discover discord bot and opeanai api. <br />
+This bot was made for fun and discover discord bot, opeanai api, docker-compose. <br />
 
 # how use it ?
 
+install docker-compose <br />
 install python (code with python 3.11) <br />
 
 <br />
@@ -51,6 +53,8 @@ now it work<br />
 <br />
 for work he need openai key and discord bot key<br />
 <br />
+add your user id the admin list
+
 # functionality <br />
 <br />
 in discord type: <br />
@@ -78,6 +82,12 @@ commandes:<br />
 -"!quote" edit image with text send <br />
 
 -"!avatar" sent avatar <br />
+
+-"!minecraft_setup" setup file for docker-compose and server id, need to have is user id in admin in private_key.py<br />
+
+-"!minecraft" start or stop server with "!minecraft 1" or "!minecraft 0" linked to severid <br />
+
+-"!minecraft_status " sent 5 last output of mincraft server if launch <br />
 
 -"!help" show commands<br />
 
