@@ -7,6 +7,8 @@ import configparser
 import requests
 from PIL import Image, ImageDraw,ImageFont
 import private_key
+import subprocess
+import yaml
 
 
 
@@ -133,6 +135,7 @@ async def Game(message): # start game
 async def version(ctx):
     await ctx.channel.send("https://github.com/olivier-be/bot_discord/")
     await ctx.channel.send("{} fair bot".format(config["version"]["version"]))
+
 @client.command()
 async def end(ctx):
     global games
@@ -204,6 +207,8 @@ async def update(ctx): # check update
     else:
         await ctx.channel.send("update a available: {} to {}".format(config["version"]["version"], tag[0]['name']))
         await ctx.channel.send("git pull recommend")
+
+
 @client.command()
 async def avatar(message): #print avatar
     e = discord.Embed()
@@ -261,7 +266,72 @@ async def quote(message,*,message_content:str): #write word on image
     await message.channel.send(file=discord.File(final_picture))
 
 
+@client.command() 
+async def minecraft_setup(message): #write word on image
+    if message.author.id in private_key.admin:
+        s =  private_key.path + "mincraft-" + str(message.guild.id)
+        subprocess.run(["mkdir", s])
+        subprocess.run(["mkdir", s +"/mincraft"])
+        data = {
+       'services': {
+            'mc':{
+                'image':'itzg/minecraft-server',
+                'tty':'true',
+                'stdin_open':'true',
+                'ports':['25565:25565'],
+                'environment':
+                    {
+                        'EULA':'TRUE'
+                    },
+                'volumes':[s +"/mincraft"],
+                    },
+                },
+        }
+        with open(s + '/docker-compose.yaml', 'w') as file:
+            yaml.dump(data, file)
+        await message.channel.send("data for server setup")
+    else:
+        await message.channel.send("demand to bot admin for setup the server")
 
+
+@client.command() 
+async def minecraft(message,start:int): #write word on image
+    #if ctx.author.username == "furious": 
+
+    s =  private_key.path + "mincraft-" + str(message.guild.id)
+    if start == 1 and (message.author.mention == discord.Permissions.administrator 
+    or message.author.id in private_key.admin) :
+        subprocess.run(["docker-compose","-f",
+                    s+ '/docker-compose.yaml',
+                    "up","-d"]) 
+        await message.channel.send("server start")
+    else:
+        subprocess.run(["docker-compose","-f",
+                    s + '/docker-compose.yaml',
+                    "down"])
+        await message.channel.send("server stop")
+
+@client.command()
+async def minecraft_status(message): #write word on image
+    s =  private_key.path + "mincraft-" + str(message.guild.id)
+    res = subprocess.run(['docker-compose',
+                          '--project-directory',s,'logs'],
+                         capture_output=True, text=True)
+    output = str(res.stdout).splitlines()
+    n = len (output)
+    if n < 5:
+        s =0
+    else:
+        s= n - 5
+    for e in range(s,n): 
+        await message.channel.send('```' + output[e] + '```' )
+
+
+
+
+@client.command()
+async def minecraft_map(message,start:int): #write word on image
+    await message.channel.send("comming soon") 
 
 
 client.run(private_key.discord_key)  # discord api key
