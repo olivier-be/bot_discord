@@ -55,6 +55,27 @@ for work he need openai key and discord bot key<br />
 <br />
 add your user id the admin list
 
+# mincraft server 
+  1 set up docker-compse<br />
+  "!minecraft_setup" set up mincraft directory for the acteur discord server <br />
+  2 start server <br />
+  "!minecraft 1" start the server<br />
+  3 install map (skip if you want VANILLA)<br />
+  for https://www.minecraftmaps.com/game-maps/minigames-world<br />
+  in private_key.py : allow_website = ['minecraftmaps.com']<br />
+  use<br />
+  "!minecraft_map "VERSION(ex :"1.20.2")" "allow_website(ex:"minecraftmaps.com") "END OF LINK(game-maps/minigames-  world/download-map")" <br />
+  4 add admin to mincraft <br />
+  "!minecraft_op uuid(ex:234;lkj4h2lkj3h) name(ex:name)" add op to ops.json
+  5 restart server <br />
+  "!minecraft 0" stop the server<br />
+  "!minecraft 1" start the server<br />
+  6 get status <br />
+    "!minecraft_status" sent data logs <br />
+  7 remove file for a server <br />
+    "!minecraft_remove"
+  
+
 # functionality <br />
 <br />
 in discord type: <br />
