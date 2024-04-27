@@ -9,8 +9,10 @@ from PIL import Image, ImageDraw,ImageFont
 import private_key
 import subprocess
 import yaml
-
-
+import json
+import zipfile
+import os
+import shutil
 
 path =  private_key.path
 config = configparser.ConfigParser()
@@ -271,25 +273,40 @@ async def minecraft_setup(message): #write word on image
     if message.author.id in private_key.admin:
         s =  private_key.path + "mincraft-" + str(message.guild.id)
         subprocess.run(["mkdir", s])
-        subprocess.run(["mkdir", s +"/mincraft"])
         data = {
        'services': {
-            'mc':{
+            'minecraft-server':{
                 'image':'itzg/minecraft-server',
                 'tty':'true',
                 'stdin_open':'true',
                 'ports':['25565:25565'],
                 'environment':
                     {
-                        'EULA':'TRUE'
+                        'VERSION':'1.19',
+                        'EULA':"TRUE",
+                        'ENABLE_COMMAND_BLOCK':"TRUE",
+                        'MEMORY': "5G"
                     },
-                'volumes':[s +"/mincraft"],
+                'volumes':[ './data:/data'],
                     },
                 },
         }
         with open(s + '/docker-compose.yaml', 'w') as file:
             yaml.dump(data, file)
         await message.channel.send("data for server setup")
+    else:
+        await message.channel.send("demand to bot admin for setup the server")
+
+
+@client.command() 
+async def minecraft_remove(message): #write word on image
+    if message.author.id in private_key.admin:
+        s =  private_key.path + "mincraft-" + str(message.guild.id)
+        subprocess.run(["docker-compose","-f",
+                    s + '/docker-compose.yaml',
+                    "down"])
+        subprocess.run(["rm","-rf", s])
+        await message.channel.send("data for server remove")
     else:
         await message.channel.send("demand to bot admin for setup the server")
 
@@ -326,12 +343,87 @@ async def minecraft_status(message): #write word on image
     for e in range(s,n): 
         await message.channel.send('```' + output[e] + '```' )
 
-
+def move_files(source_dir, destination_dir):
+    # Iterate over files in the source directory
+    for filename in os.listdir(source_dir):
+        pa = os.path.join(source_dir,filename)
+        # Construct full paths for the source and destination files
+        if os.path.isdir(pa):
+            for fi in  os.listdir(pa):
+                source_file = os.path.join(pa,fi)
+                destination_file = os.path.join(destination_dir, fi)
+                shutil.move(source_file, destination_file)
 
 
 @client.command()
-async def minecraft_map(message,start:int): #write word on image
-    await message.channel.send("comming soon") 
+async def minecraft_map(message,version:str,website:str,end:str): #write word on image
+    if (((message.author.mention == discord.Permissions.administrator)
+         or message.author.id in private_key.admin)  
+        and website in private_key.allow_website):
+        s =  private_key.path + "mincraft-" + str(message.guild.id)
+        subprocess.run(["docker-compose","-f",
+                    s + '/docker-compose.yaml',
+                    "down"])
+        subprocess.run(["rm","-rf", s + '/data/world' ])
+        await message.channel.send("server stop")
+        with open(s +"/docker-compose.yaml", 'r') as file:
+            prime_service = yaml.safe_load(file)
+        if prime_service == None:
+            data = {
+            'services': {
+            'minecraft-server':{
+                'image':'itzg/minecraft-server',
+                'tty':'true',
+                'stdin_open':'true',
+                'ports':['25565:25565'],
+                'environment':
+                    {
+                        'VERSION':version,
+                        'EULA':"TRUE",
+                        'ENABLE_COMMAND_BLOCK':"TRUE",
+                        'MEMORY': "5G"
+                    },
+                'volumes':[ './data:/data'],
+                    },
+                },
+            }
+            with open(s + '/docker-compose.yaml', 'w') as file:
+                yaml.dump(data, file)
 
+        prime_service['services']['minecraft-server']['environment']['VERSION'] = version
+        with open(s + '/docker-compose.yaml', 'w') as file:
+            yaml.dump(prime_service, file) 
+        subprocess.run(['wget','-t','20','https://www.' + website +"/"+ end
+                       ,'-O',s + '/file.zip'])
+        await message.channel.send("downlaod succes")
+        subprocess.run(["mkdir", s + '/data/world'])
+        subprocess.run(['mv',s + '/data/ops.json',s + "/"])
+        subprocess.run(["mkdir", s + '/temp' ])  
+        subprocess.run(['unzip','-o',
+                    s + '/file.zip','-d',s + '/temp'])
+        move_files(s + '/temp', s + '/data/world')
+        subprocess.run(['mv',s + '/',s + '/data/ops.json']) 
+        await message.channel.send("extrated and move world")
+        subprocess.run(["rm","-rf", s + '/file.zip' ])
+        await message.channel.send("data for server setup")
+    else:
+        await message.channel.send("not allow or bad website")
+
+@client.command()
+async def minecraft_op(message,uuid:str,*,name:str): 
+    if ((message.author.mention == discord.Permissions.administrator)
+         or message.author.id):
+        s =  private_key.path + "mincraft-" + str(message.guild.id)
+        #print(s + '/data/ops.json')
+        with open(s + '/data/ops.json','r') as file:
+          # First we load existing data into a dict.
+            #print(file)
+            file_data = json.load(file)
+
+        add = {"uuid": uuid,"name": name,"level": 4}
+        file_data.append(add)
+        with open(s + '/data/ops.json', 'w') as file:
+            json.dump(file_data,file)
+        await message.channel.send("player added") 
 
 client.run(private_key.discord_key)  # discord api key
