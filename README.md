@@ -14,6 +14,7 @@ This bot was made for fun and discover discord bot, opeanai api, docker-compose.
 # how use it ?
 
 install docker-compose <br />
+install unzip <br />
 install python (code with python 3.11) <br />
 
 <br />
