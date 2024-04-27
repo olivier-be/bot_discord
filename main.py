@@ -395,7 +395,7 @@ async def minecraft_map(message,version:str,website:str,end:str): #write word on
             yaml.dump(prime_service, file) 
         subprocess.run(['wget','-t','20','https://www.' + website +"/"+ end
                        ,'-O',s + '/file.zip'])
-        await message.channel.send("downlaod succes")
+        await message.channel.send("download succes")
         subprocess.run(["mkdir", s + '/data/world'])
         subprocess.run(['mv',s + '/data/ops.json',s + "/"])
         subprocess.run(["mkdir", s + '/temp' ])  
