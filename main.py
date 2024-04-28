@@ -16,7 +16,7 @@ import shutil
 
 path =  private_key.path
 config = configparser.ConfigParser()
-config.read( private_key.path + '.editorconfig') #ouverture ficher config
+config.read( private_key.path + '/.editorconfig') #ouverture ficher config
 config.sections()
 # Make the request
 url = 'https://api.github.com/repos/olivier-be/bot_discord/tags'
