@@ -14,7 +14,6 @@ This bot was made for fun and discover discord bot, opeanai api, docker-compose.
 # how use it ?
 
 install docker-compose <br />
-install unzip <br />
 install python (code with python 3.11) <br />
 
 <br />
@@ -58,24 +57,66 @@ add your user id the admin list
 
 # mincraft server 
   1 set up docker-compse<br />
-  "!minecraft_setup" set up mincraft directory for the acteur discord server <br />
+    ```!minecraft_setup``` set up mincraft directory for the acteur discord server <br />
   2 start server <br />
-  "!minecraft 1" start the server<br />
+    ```!minecraft 1``` start the server<br />
   3 install map (skip if you want VANILLA)<br />
-  for https://www.minecraftmaps.com/game-maps/minigames-world<br />
-  in private_key.py : allow_website = ['minecraftmaps.com']<br />
-  use<br />
-  "!minecraft_map "VERSION(ex :"1.20.2")" "allow_website(ex:"minecraftmaps.com") "END OF LINK(game-maps/minigames-  world/download-map")" <br />
+    for https://www.minecraftmaps.com/game-maps/minigames-world<br />
+    in private_key.py : allow_website = ['minecraftmaps.com']<br />
+    use<br />
+    ```!minecraft_map ```VERSION(ex :"1.20.2")" "allow_website(ex:"minecraftmaps.com") "END OF LINK(game-maps/minigames-  world/download-map")" <br />
   4 add admin to mincraft <br />
-  "!minecraft_op uuid(ex:234;lkj4h2lkj3h) name(ex:name)" add op to ops.json
+    ```!minecraft_op uuid(ex:234;lkj4h2lkj3h) name(ex:name)``` add op to ops.json
   5 restart server <br />
-  "!minecraft 0" stop the server<br />
-  "!minecraft 1" start the server<br />
+    ```!minecraft 0``` stop the server<br />
+    ```!minecraft 1``` start the server<br />
   6 get status <br />
-    "!minecraft_status" sent data logs <br />
+    ```!minecraft_status``` sent data logs <br />
   7 remove file for a server <br />
-    "!minecraft_remove"
-  
+    ```!minecraft_remove```
+# service info 
+
+/etc/systemd/system/bot_discord.service:
+```
+[Unit]
+Description=bot_discord
+After=
+ 
+[Service]
+Type=simple
+ 
+User=root #if you don't use mincraft (docker-compse) no need to be root
+Group=root
+ 
+ExecStart=/usr/bin/python3 /home/<user>/bot_discord/main.py
+ 
+Restart=on-failure
+ 
+```
+you need root to modify the file //bot_discord/mincraft-*/data
+
+/etc/systemd/system/llama_server.service 
+```
+[Unit]
+Description=llama.cpp server
+After=
+ 
+[Service]
+Type=simple
+ 
+ExecStart=/home/ubuntu/llama.cpp/server -m /home/ubuntu/llama.cpp/models/Meta-Llama-3-8B-Instruct/ggml-model-Q4_K_M.gguf -c 2048 -t 3
+ 
+Restart=on-failure
+[Install]
+WantedBy=multi-user.target
+```
+
+
+# Configures the time to wait before service is stopped forcefully.
+TimeoutStopSec=300
+ 
+[Install]
+WantedBy=multi-user.target
 
 # functionality <br />
 <br />
@@ -85,33 +126,33 @@ in discord type: <br />
 
 commandes:<br />
 
--"!game" start game to find one word (one at time per bot and work on the initialised channel<br />
+-```!game``` start game to find one word (one at time per bot and work on the initialised channel<br />
 
--"!end" stop on the game on the channel <br />
+-```!end``` stop on the game on the channel <br />
 
--"!stopgame" stop on the game (work for all servers connected)<br />
+-```!stopgame``` stop on the game (work for all servers connected)<br />
 
--"!gpt3" use text-davinci-003 to response <br />
+-```!gpt3``` use text-davinci-003 to response <br />
 
--"!Dalle2" use dalle-3 to send image generate<br />
+-```!Dalle2``` use dalle-3 to send image generate<br />
 
--"!clear_message" take nb and delete nb message in channel. He needs manage_messages permission to delete.<br />
+-```!clear_message``` take nb and delete nb message in channel. He needs manage_messages permission to delete.<br />
 
--"!spam" take amount size message. He spam the channel with this setting<br />
+-```!spam``` take amount size message. He spam the channel with this setting<br />
 
--"!update" say if update are available<br />
+-```!update``` say if update are available<br />
 
--"!quote" edit image with text send <br />
+-```!quote``` edit image with text send <br />
 
--"!avatar" sent avatar <br />
+-```!avatar``` sent avatar <br />
 
--"!minecraft_setup" setup file for docker-compose and server id, need to have is user id in admin in private_key.py<br />
+-```!minecraft_setup``` setup file for docker-compose and server id, need to have is user id in admin in private_key.py<br />
 
--"!minecraft" start or stop server with "!minecraft 1" or "!minecraft 0" linked to severid <br />
+-```!minecraft``` start or stop server with "!minecraft 1" or "!minecraft 0" linked to severid <br />
 
--"!minecraft_status " sent 5 last output of mincraft server if launch <br />
+-```!minecraft_status ``` sent 5 last output of mincraft server if launch <br />
 
--"!help" show commands<br />
+-```!help``` show commands<br />
 
 <br />
 
@@ -119,13 +160,13 @@ commandes:<br />
 
 in one message: <br />
 
--"bot" just don't use it <br />
+-```bot``` just don't use it <br />
 
--"toxic" said "I am here"<br />
+-```toxic``` said "I am here"<br />
 
--"windows" why you use it <br />
+-```windows``` why you use it <br />
 
--"feur" counter feur bot are better<br />
+-```feur``` counter feur bot are better<br />
 
 <br />
 

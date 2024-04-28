@@ -268,8 +268,8 @@ async def quote(message,*,message_content:str): #write word on image
     await message.channel.send(file=discord.File(final_picture))
 
 
-@client.command() 
-async def minecraft_setup(message): #write word on image
+@client.command()
+async def minecraft_setup(message,*,version:str): #write word on image
     if message.author.id in private_key.admin:
         s =  private_key.path + "mincraft-" + str(message.guild.id)
         subprocess.run(["mkdir", s])
@@ -283,7 +283,7 @@ async def minecraft_setup(message): #write word on image
                 'ports':['25565:25565'],
                 'environment':
                     {
-                        'VERSION':'1.19',
+                        'VERSION':version,
                         'EULA':"TRUE",
                         'ENABLE_COMMAND_BLOCK':"TRUE",
                         'MEMORY': "5G"
@@ -300,7 +300,7 @@ async def minecraft_setup(message): #write word on image
 
 
 @client.command() 
-async def minecraft_remove(message): #write word on image
+async def minecraft_remove(message): 
     if message.author.id in private_key.admin:
         s =  private_key.path + "mincraft-" + str(message.guild.id)
         subprocess.run(["docker-compose","-f",
@@ -313,7 +313,7 @@ async def minecraft_remove(message): #write word on image
 
 
 @client.command() 
-async def minecraft(message,start:int): #write word on image
+async def minecraft(message,start:int): 
     #if ctx.author.username == "furious": 
 
     s =  private_key.path + "mincraft-" + str(message.guild.id)
@@ -355,6 +355,12 @@ def move_files(source_dir, destination_dir):
                 destination_file = os.path.join(destination_dir, fi)
                 shutil.move(source_file, destination_file)
 
+def is_zip_file(file_path):
+    try:
+        with zipfile.ZipFile(file_path, 'r') as zip_ref:
+           return True
+    except zipfile.BadZipFile:
+       return False
 
 @client.command()
 async def minecraft_map(message,version:str,website:str,end:str): #write word on image
@@ -375,6 +381,7 @@ async def minecraft_map(message,version:str,website:str,end:str): #write word on
             'minecraft-server':{
                 'image':'itzg/minecraft-server',
                 'tty':'true',
+                'user':'root',
                 'stdin_open':'true',
                 'ports':['25565:25565'],
                 'environment':
@@ -387,28 +394,35 @@ async def minecraft_map(message,version:str,website:str,end:str): #write word on
                 'volumes':[ './data:/data'],
                     },
                 },
-            }
+                }
             with open(s + '/docker-compose.yaml', 'w') as file:
                 yaml.dump(data, file)
+        else:
+            prime_service['services']['minecraft-server']['environment']['VERSION'] = version
+            with open(s + '/docker-compose.yaml', 'w') as file:
+                yaml.dump(prime_service, file) 
 
-        prime_service['services']['minecraft-server']['environment']['VERSION'] = version
-        with open(s + '/docker-compose.yaml', 'w') as file:
-            yaml.dump(prime_service, file) 
         subprocess.run(['wget','-t','20','https://www.' + website +"/"+ end
                        ,'-O',s + '/file.zip'])
-        await message.channel.send("download succes")
-        subprocess.run(["mkdir", s + '/data/world'])
-        subprocess.run(['mv',s + '/data/ops.json',s + "/"])
-        subprocess.run(["mkdir", s + '/temp' ])  
-        subprocess.run(['unzip','-o',
+        if is_zip_file(s + '/file.zip'):
+            await message.channel.send("download succes")
+            subprocess.run(["mkdir", s + '/data/world'])
+            subprocess.run(['mv',s + '/data/ops.json',s + "/"])
+            subprocess.run(["mkdir", s + '/temp' ])  
+            subprocess.run(['unzip','-o',
                     s + '/file.zip','-d',s + '/temp'])
-        subprocess.run(["sudo","chmod","-R","777",s + '/data'])
-        subprocess.run(['chown','-R','root:root',s + '/data'])
-        move_files(s + '/temp', s + '/data/world')
-        subprocess.run(['mv',s + '/ops.json',s + '/data/ops.json']) 
-        await message.channel.send("extrated and move world")
-        subprocess.run(["rm","-rf", s + '/file.zip' ])
-        await message.channel.send("data for server setup")
+            subprocess.run(["chmod","-R","777",s + '/data'])
+            subprocess.run(['chown','-R','root:root',s + '/data'])
+            move_files(s + '/temp', s + '/data/world')
+            subprocess.run(['mv',s + '/ops.json',s + '/data/ops.json']) 
+            await message.channel.send("extrated and move world")
+            subprocess.run(["rm","-rf", s + '/file.zip' ])
+            subprocess.run(["rm","-rf", s + '/temp' ])
+            await message.channel.send("data for server setup")
+        else:
+            await message.channel.send("error downlaod")
+            await message.channel.send("download the file on your pc before and re run command")
+
     else:
         await message.channel.send("not allow or bad website")
 
