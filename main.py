@@ -278,6 +278,7 @@ async def minecraft_setup(message): #write word on image
             'minecraft-server':{
                 'image':'itzg/minecraft-server',
                 'tty':'true',
+                'user':'root',
                 'stdin_open':'true',
                 'ports':['25565:25565'],
                 'environment':
@@ -401,8 +402,10 @@ async def minecraft_map(message,version:str,website:str,end:str): #write word on
         subprocess.run(["mkdir", s + '/temp' ])  
         subprocess.run(['unzip','-o',
                     s + '/file.zip','-d',s + '/temp'])
+        subprocess.run(["sudo","chmod","-R","777",s + '/data'])
+        subprocess.run(['chown','-R','root:root',s + '/data'])
         move_files(s + '/temp', s + '/data/world')
-        subprocess.run(['mv',s + '/',s + '/data/ops.json']) 
+        subprocess.run(['mv',s + '/ops.json',s + '/data/ops.json']) 
         await message.channel.send("extrated and move world")
         subprocess.run(["rm","-rf", s + '/file.zip' ])
         await message.channel.send("data for server setup")
