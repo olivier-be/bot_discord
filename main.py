@@ -278,7 +278,6 @@ async def minecraft_setup(message,*,version:str): #write word on image
             'minecraft-server':{
                 'image':'itzg/minecraft-server',
                 'tty':'true',
-                'user':'root',
                 'stdin_open':'true',
                 'ports':['25565:25565'],
                 'environment':
@@ -311,6 +310,19 @@ async def minecraft_remove(message):
     else:
         await message.channel.send("demand to bot admin for setup the server")
 
+@client.command() 
+async def minecraft_reset(message): 
+    if message.author.id in private_key.admin:
+        s =  private_key.path + "mincraft-" + str(message.guild.id)
+        subprocess.run(["docker-compose","-f",
+                    s + '/docker-compose.yaml',
+                    "down"])
+        subprocess.run(["rm","-rf", s + 'data/world'])
+        await message.channel.send("data for server remove")
+    else:
+        await message.channel.send("demand to bot admin for setup the server")
+
+
 
 @client.command() 
 async def minecraft(message,start:int): 
@@ -328,6 +340,64 @@ async def minecraft(message,start:int):
                     s + '/docker-compose.yaml',
                     "down"])
         await message.channel.send("server stop")
+
+
+@client.command()
+async def minecraft_op(message,uuid:str,*,name:str): 
+    if ((message.author.mention == discord.Permissions.administrator)
+         or message.author.id):
+        s =  private_key.path + "mincraft-" + str(message.guild.id)
+        #print(s + '/data/ops.json')
+        with open(s + '/data/ops.json','r') as file:
+          # First we load existing data into a dict.
+            #print(file)
+            file_data = json.load(file)
+
+        add = {"uuid": uuid,"name": name,"level": 4}
+        file_data.append(add)
+        with open(s + '/data/ops.json', 'w') as file:
+            json.dump(file_data,file)
+        subprocess.run(['chown','-R','opc:opc',s + '/data'])
+        await message.channel.send("player added") 
+
+@client.command()
+async def minecraft_withlist(message,uuid:str,*,name:str): 
+    if ((message.author.mention == discord.Permissions.administrator)
+         or message.author.id):
+        s =  private_key.path + "mincraft-" + str(message.guild.id)
+        #print(s + '/data/ops.json')
+        with open(s + '/data/whitelist.json.json','r') as file:
+          # First we load existing data into a dict.
+            #print(file)
+            file_data = json.load(file)
+
+        add = {"uuid": uuid,"name": name}
+        file_data.append(add)
+        with open(s + '/data/whitelist.json', 'w') as file:
+            json.dump(file_data,file)
+        subprocess.run(['chown','-R','opc:opc',s + '/data']) 
+        await message.channel.send("player added") 
+
+
+@client.command()
+async def minecraft_list(message,name:str): 
+    if ((message.author.mention == discord.Permissions.administrator)
+         or message.author.id):
+        s =  private_key.path + "mincraft-" + str(message.guild.id)
+        #print(s + '/data/ops.json')
+        if name == 'op':
+            v = 'ops.json'
+            await message.channel.send('op:')
+        else:
+            v = 'whitelist.json'
+            await message.channel.send('whitelist:')
+        with open(s + '/data/' + v,'r') as file:
+          # First we load existing data into a dict.
+            #print(file)
+            file_data = json.load(file)
+        for e in file_data:
+            await message.channel.send("uuid: "+ e["uuid"] + " name"+ e["name"])
+
 
 @client.command()
 async def minecraft_status(message): #write word on image
@@ -355,6 +425,7 @@ def move_files(source_dir, destination_dir):
                 destination_file = os.path.join(destination_dir, fi)
                 shutil.move(source_file, destination_file)
 
+
 def is_zip_file(file_path):
     try:
         with zipfile.ZipFile(file_path, 'r') as zip_ref:
@@ -381,7 +452,6 @@ async def minecraft_map(message,version:str,website:str,end:str): #write word on
             'minecraft-server':{
                 'image':'itzg/minecraft-server',
                 'tty':'true',
-                'user':'root',
                 'stdin_open':'true',
                 'ports':['25565:25565'],
                 'environment':
@@ -412,35 +482,19 @@ async def minecraft_map(message,version:str,website:str,end:str): #write word on
             subprocess.run(['unzip','-o',
                     s + '/file.zip','-d',s + '/temp'])
             subprocess.run(["chmod","-R","777",s + '/data'])
-            subprocess.run(['chown','-R','root:root',s + '/data'])
             move_files(s + '/temp', s + '/data/world')
             subprocess.run(['mv',s + '/ops.json',s + '/data/ops.json']) 
             await message.channel.send("extrated and move world")
+            subprocess.run(['chown','-R','opc:opc',s + '/data'])
             subprocess.run(["rm","-rf", s + '/file.zip' ])
             subprocess.run(["rm","-rf", s + '/temp' ])
             await message.channel.send("data for server setup")
         else:
-            await message.channel.send("error downlaod")
-            await message.channel.send("download the file on your pc before and re run command")
+            await message.channel.send("error download")
+            await message.channel.send("download the file on your pc before retry command")
 
     else:
         await message.channel.send("not allow or bad website")
 
-@client.command()
-async def minecraft_op(message,uuid:str,*,name:str): 
-    if ((message.author.mention == discord.Permissions.administrator)
-         or message.author.id):
-        s =  private_key.path + "mincraft-" + str(message.guild.id)
-        #print(s + '/data/ops.json')
-        with open(s + '/data/ops.json','r') as file:
-          # First we load existing data into a dict.
-            #print(file)
-            file_data = json.load(file)
-
-        add = {"uuid": uuid,"name": name,"level": 4}
-        file_data.append(add)
-        with open(s + '/data/ops.json', 'w') as file:
-            json.dump(file_data,file)
-        await message.channel.send("player added") 
 
 client.run(private_key.discord_key)  # discord api key
