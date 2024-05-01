@@ -268,12 +268,10 @@ async def quote(message,*,message_content:str): #write word on image
     await message.channel.send(file=discord.File(final_picture))
 
 
-@client.command()
-async def minecraft_setup(message,*,version:str): #write word on image
-    if message.author.id in private_key.admin:
-        s =  private_key.path + "mincraft-" + str(message.guild.id)
-        subprocess.run(["mkdir", s])
-        data = {
+
+
+def dockerconfig(s ,version):
+    data = {
        'services': {
             'minecraft-server':{
                 'image':'itzg/minecraft-server',
@@ -291,8 +289,17 @@ async def minecraft_setup(message,*,version:str): #write word on image
                     },
                 },
         }
-        with open(s + '/docker-compose.yaml', 'w') as file:
-            yaml.dump(data, file)
+     
+    with open(s + '/docker-compose.yaml', 'w') as file:
+         yaml.dump(data, file)
+
+
+@client.command()
+async def minecraft_setup(message,*,version:str): 
+    if message.author.id in private_key.admin:
+        s =  private_key.path + "mincraft-" + str(message.guild.id)
+        subprocess.run(["mkdir", s])
+        dockerconfig(s,version)
         await message.channel.send("data for server setup")
     else:
         await message.channel.send("demand to bot admin for setup the server")
@@ -359,6 +366,9 @@ async def minecraft_op(message,uuid:str,*,name:str):
             json.dump(file_data,file)
         subprocess.run(['chown','-R','opc:opc',s + '/data'])
         await message.channel.send("player added") 
+    else:
+        await message.channel.send("not allowed")
+
 
 @client.command()
 async def minecraft_withlist(message,uuid:str,*,name:str): 
@@ -377,7 +387,8 @@ async def minecraft_withlist(message,uuid:str,*,name:str):
             json.dump(file_data,file)
         subprocess.run(['chown','-R','opc:opc',s + '/data']) 
         await message.channel.send("player added") 
-
+    else:
+        await message.channel.send("not allowed")
 
 @client.command()
 async def minecraft_list(message,name:str): 
@@ -397,6 +408,31 @@ async def minecraft_list(message,name:str):
             file_data = json.load(file)
         for e in file_data:
             await message.channel.send("uuid: "+ e["uuid"] + " name"+ e["name"])
+    else:
+         await message.channel.send("not allowed")
+
+
+@client.command()
+async def minecraft_exec(message,*,command:str):
+    if ((message.author.mention == discord.Permissions.administrator)
+         or message.author.id):
+        s =  private_key.path + "mincraft-" + str(message.guild.id)
+        subprocess.run(['docker-compose','exec'
+                        ,command]);
+        await message.channel.send("command executed")
+    else:
+        await message.channel.send("not allowed")
+
+@client.command()
+async def minecraft_update(message): 
+    if ((message.author.mention == discord.Permissions.administrator)
+         or message.author.id):
+        s =  private_key.path + "mincraft-" + str(message.guild.id)
+        subprocess.run(['docker-compose','pull'
+                        ,command]);
+        await message.channel.send("updated")
+    else:
+        await message.channel.send("not allowed")
 
 
 @client.command()
@@ -411,6 +447,7 @@ async def minecraft_status(message): #write word on image
         s =0
     else:
         s= n - 5
+    
     for e in range(s,n): 
         await message.channel.send('```' + output[e] + '```' )
 
@@ -447,26 +484,7 @@ async def minecraft_map(message,version:str,website:str,end:str): #write word on
         with open(s +"/docker-compose.yaml", 'r') as file:
             prime_service = yaml.safe_load(file)
         if prime_service == None:
-            data = {
-            'services': {
-            'minecraft-server':{
-                'image':'itzg/minecraft-server',
-                'tty':'true',
-                'stdin_open':'true',
-                'ports':['25565:25565'],
-                'environment':
-                    {
-                        'VERSION':version,
-                        'EULA':"TRUE",
-                        'ENABLE_COMMAND_BLOCK':"TRUE",
-                        'MEMORY': "5G"
-                    },
-                'volumes':[ './data:/data'],
-                    },
-                },
-                }
-            with open(s + '/docker-compose.yaml', 'w') as file:
-                yaml.dump(data, file)
+            dockerconfig(s,version)
         else:
             prime_service['services']['minecraft-server']['environment']['VERSION'] = version
             with open(s + '/docker-compose.yaml', 'w') as file:
@@ -494,7 +512,7 @@ async def minecraft_map(message,version:str,website:str,end:str): #write word on
             await message.channel.send("download the file on your pc before retry command")
 
     else:
-        await message.channel.send("not allow or bad website")
+        await message.channel.send("not allowed or bad website")
 
 
 client.run(private_key.discord_key)  # discord api key
