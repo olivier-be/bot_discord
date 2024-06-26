@@ -104,7 +104,7 @@ After=
 [Service]
 Type=simple
  
-ExecStart=/home/ubuntu/llama.cpp/server -m /home/ubuntu/llama.cpp/models/Meta-Llama-3-8B-Instruct/ggml-model-Q4_K_M.gguf -c 2048 -t 3
+ExecStart=/home/ubuntu/llama.cpp/llama-server -m /home/ubuntu/llama.cpp/models/Meta-Llama-3-8B-Instruct/ggml-model-Q4_K_M.gguf -c 2048 -t 3
  
 Restart=on-failure
 [Install]
