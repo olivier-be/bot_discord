@@ -490,7 +490,7 @@ async def minecraft_map(message,version:str,website:str,installpage:str,end:str)
             with open(s + '/docker-compose.yaml', 'w') as file:
                 yaml.dump(prime_service, file) 
 
-        subprocess.run(['wget','--referer='+installpage,'-t','20','https://www.' + website +"/"+ end
+        subprocess.run(['wget','--user-agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"','--referer='+installpage,'-t','20','https://www.' + website +"/"+ end
                        ,'-O',s + '/file.zip'])
         if is_zip_file(s + '/file.zip'):
             await message.channel.send("download succes")
