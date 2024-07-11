@@ -471,7 +471,7 @@ def is_zip_file(file_path):
        return False
 
 @client.command()
-async def minecraft_map(message,version:str,website:str,end:str): #write word on image
+async def minecraft_map(message,version:str,website:str,installpage:str,end:str): #write word on image
     if (((message.author.mention == discord.Permissions.administrator)
          or message.author.id in private_key.admin)  
         and website in private_key.allow_website):
@@ -490,7 +490,7 @@ async def minecraft_map(message,version:str,website:str,end:str): #write word on
             with open(s + '/docker-compose.yaml', 'w') as file:
                 yaml.dump(prime_service, file) 
 
-        subprocess.run(['wget','-t','20','https://www.' + website +"/"+ end
+        subprocess.run(['wget','--referer='+installpage,'-t','20','https://www.' + website +"/"+ end
                        ,'-O',s + '/file.zip'])
         if is_zip_file(s + '/file.zip'):
             await message.channel.send("download succes")
