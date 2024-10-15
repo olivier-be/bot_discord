@@ -251,7 +251,7 @@ async def quote(message,*,message_content:str): #write word on image
     im = Image.open(path_picture)
     pix = im.load()
     draw = ImageDraw.Draw(im)
-    font1 = ImageFont.truetype("arial.ttf", int(im.size[0] * 0.04))
+    font1 = ImageFont.load_default()
     y=(int(im.size[0] * 0.10))
     i=0
 
