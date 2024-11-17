@@ -271,7 +271,7 @@ async def quote(message,*,message_content:str): #write word on image
 
 
 
-def dockerconfig(s ,version):
+def dockerconfig(s ,version,is_whitelist):
     data = {
        'services': {
             'minecraft-server':{
@@ -290,17 +290,19 @@ def dockerconfig(s ,version):
                     },
                 },
         }
-     
+    if is_whitelist == "true":
+        data['services']['minecraft-server']['environment']['WHITELIST'] = "TRUE"
+
     with open(s + '/docker-compose.yaml', 'w') as file:
          yaml.dump(data, file)
 
 
 @client.command()
-async def minecraft_setup(message,*,version:str): 
+async def minecraft_setup(message,is_whitelist,*,version:str): 
     if message.author.id in private_key.admin:
         s =  private_key.path + "mincraft-" + str(message.guild.id)
         subprocess.run(["mkdir", s])
-        dockerconfig(s,version)
+        dockerconfig(s,version,is_whitelist)
         await message.channel.send("data for server setup")
     else:
         await message.channel.send("demand to bot admin for setup the server")
@@ -373,11 +375,11 @@ async def minecraft_op(message,uuid:str,*,name:str):
 
 @client.command()
 async def minecraft_withlist(message,uuid:str,*,name:str): 
-    if ((message.author.mention == discord.Permissions.administrator)
+    if (True or (message.author.mention == discord.Permissions.administrator)
          or message.author.id):
         s =  private_key.path + "mincraft-" + str(message.guild.id)
         #print(s + '/data/ops.json')
-        with open(s + '/data/whitelist.json.json','r') as file:
+        with open(s + '/data/whitelist.json','r') as file:
           # First we load existing data into a dict.
             #print(file)
             file_data = json.load(file)
@@ -386,7 +388,10 @@ async def minecraft_withlist(message,uuid:str,*,name:str):
         file_data.append(add)
         with open(s + '/data/whitelist.json', 'w') as file:
             json.dump(file_data,file)
-        subprocess.run(['chown','-R','opc:opc',s + '/data']) 
+        subprocess.run(['chown','-R','opc:opc',s + '/data'])
+        s =  "mincraft-" + str(message.guild.id) +"_minecraft-server_1"
+        res = "docker exec " + s + " /whitelist reload"
+        os.system(res);
         await message.channel.send("player added") 
     else:
         await message.channel.send("not allowed")
@@ -415,11 +420,11 @@ async def minecraft_list(message,name:str):
 
 @client.command()
 async def minecraft_exec(message,*,command:str):
-    if ((message.author.mention == discord.Permissions.administrator)
-         or message.author.id):
-        s =  private_key.path + "mincraft-" + str(message.guild.id)
-        subprocess.run(['docker-compose','exec'
-                        ,command]);
+    if ( message.author.id):
+        s =  "mincraft-" + str(message.guild.id) +"_minecraft-server_1"
+        res = "docker exec " + s + " " + command
+        #await message.channel.send(res)
+        os.system(res);
         await message.channel.send("command executed")
     else:
         await message.channel.send("not allowed")
