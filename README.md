@@ -39,8 +39,9 @@ https://beta.openai.com/overview<br />
 click on account and choose api key <br />
 
 create new one <br />
-2 
-self hosted ai with llama.cpp[https://github.com/ggerganov/llama.cpp]
+
+2self hosted 
+use llama.cpp[https://github.com/ggerganov/llama.cpp]
 change base_url of client_llama in main.py
 
 <br />
@@ -57,12 +58,13 @@ add your user id the admin list
 
 # mincraft server 
   1 set up docker-compse<br />
-    ```!minecraft_setup  VERSION(ex:1.20.5) ``` set up mincraft directory for the acteur discord server <br />
+    ```!minecraft_setup  WHITELIST(false) ALLOW_HACK_ACCOUNT(false) VERSION(ex:1.20.5) ``` set up mincraft directory for the acteur discord server <br />
   2 start server <br />
     ```!minecraft 1``` start the server<br />
   3 install map (skip if you want VANILLA)<br />
     for https://www.minecraftmaps.com/game-maps/minigames-world<br />
     in private_key.py : allow_website = ['minecraftmaps.com']<br />
+    after a change in the website use filebin to store map to to get a link for install it
     use<br />
     ```!minecraft_map VERSION(ex :"1.20.2")" "allow_website(ex:"minecraftmaps.com") "END OF LINK(game-maps/minigames-  world/download-map")``` <br />
   4 add admin to mincraft <br />
@@ -74,6 +76,9 @@ add your user id the admin list
     ```!minecraft_status``` sent data logs <br />
   7 remove file for a server <br />
     ```!minecraft_remove```
+  8 exec on serv 
+  ```!minecraft_exec rcon-cli command(op testplayer)```
+
 # service info 
 
 /etc/systemd/system/bot_discord.service:
@@ -161,12 +166,6 @@ commandes:<br />
 in one message: <br />
 
 -```bot``` just don't use it <br />
-
--```toxic``` said "I am here"<br />
-
--```windows``` why you use it <br />
-
--```feur``` counter feur bot are better<br />
 
 <br />
 

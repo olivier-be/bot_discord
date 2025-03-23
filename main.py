@@ -49,10 +49,7 @@ games= []
 @client.event
 async def on_ready():
     print('Ready!')
-
     await client.change_presence(activity=discord.Game("I will spread toxicity throughout this server!"))
-
-
 
 
 @client.event
@@ -75,11 +72,6 @@ async def on_message(message): # look at all the messages
         e = discord.Embed()
         e.set_thumbnail(url="https://media.tenor.com/8XNZFtwJxscAAAAC/reverse-card-uno.gif")
         await message.channel.send(embed=e)
-    elif "toxic" in message_content:
-        await message.channel.send("I am here")
-    elif "windows" in message_content:
-        await message.channel.send("linux > ")
-
     elif i < len(games) and games[i] != None and games[i][0] == channel and message_content != "!end" :
         if message_content == games[i][1]:
 
@@ -95,8 +87,6 @@ async def on_message(message): # look at all the messages
                         )
 
             await message.channel.send(messages.choices[0].message.content)
-    elif "feur"==message_content:  # response in French to bot feur
-        await message.channel.send("why ? ")
     else:
         await client.process_commands(message)
 
@@ -111,6 +101,8 @@ async def spam(ctx, amount: int, size: int,*, message):
             await ctx.send(res)
     else:
         await ctx.send(message)
+
+
 @client.command()
 async def Game(message): # start game
     channel=message.channel
@@ -119,7 +111,6 @@ async def Game(message): # start game
     i=0
     while i<len(games) and games[i]!=None and games[i][0] != channel :
         i+=1
-
     if i == len(games):
         find = objects[int(random.uniform(0, 374))]
         games.append((str(channel), find))
@@ -217,6 +208,7 @@ async def avatar(message): #print avatar
     e.set_thumbnail(url=message.author.display_avatar)
     await message.channel.send(embed=e)
 
+
 def separator(str_size,s,n):
     if str_size > n - 1:
         return n
@@ -232,12 +224,14 @@ def separator(str_size,s,n):
 
         return u
 
+
 def find_picture(n):  # randomly returns an image
     tab=[]
     for i in range (1,int(config["quote_picture"]["nb_file"])+1):
         if (int(config[str(i)+".png"]["nb_max_line"])*int(config[str(i)+".png"]["nb_max_c"])>=n):
             tab.append(str(i)+".png")
     return tab
+
 
 @client.command()
 async def quote(message,*,message_content:str): #write word on image
@@ -271,7 +265,7 @@ async def quote(message,*,message_content:str): #write word on image
 
 
 
-def dockerconfig(s ,version,is_whitelist):
+def dockerconfig(s ,version,is_whitelist,is_crack):
     data = {
        'services': {
             'minecraft-server':{
@@ -284,7 +278,7 @@ def dockerconfig(s ,version,is_whitelist):
                         'VERSION':version,
                         'EULA':"TRUE",
                         'ENABLE_COMMAND_BLOCK':"TRUE",
-                        'MEMORY': "5G"
+                        'MEMORY': "10G"
                     },
                 'volumes':[ './data:/data'],
                     },
@@ -292,17 +286,19 @@ def dockerconfig(s ,version,is_whitelist):
         }
     if is_whitelist == "true":
         data['services']['minecraft-server']['environment']['WHITELIST'] = "TRUE"
-
+    if is_crack == "true":
+        data['services']['minecraft-server']['environment']['ONLINE_MODE'] = "FALSE"
     with open(s + '/docker-compose.yaml', 'w') as file:
          yaml.dump(data, file)
 
 
+#ex !minecraft_setup false false 1.21.1
 @client.command()
-async def minecraft_setup(message,is_whitelist,*,version:str): 
-    if message.author.id in private_key.admin:
+async def minecraft_setup(message,is_whitelist,is_crack,*,version:str): 
+    if message.author.id in private_key.admin or message.author.mention == discord.Permissions.administrator:
         s =  private_key.path + "mincraft-" + str(message.guild.id)
         subprocess.run(["mkdir", s])
-        dockerconfig(s,version,is_whitelist)
+        dockerconfig(s,version,is_whitelist,is_crack)
         await message.channel.send("data for server setup")
     else:
         await message.channel.send("demand to bot admin for setup the server")
@@ -319,6 +315,7 @@ async def minecraft_remove(message):
         await message.channel.send("data for server remove")
     else:
         await message.channel.send("demand to bot admin for setup the server")
+
 
 @client.command() 
 async def minecraft_reset(message): 
@@ -339,8 +336,7 @@ async def minecraft(message,start:int):
     #if ctx.author.username == "furious": 
 
     s =  private_key.path + "mincraft-" + str(message.guild.id)
-    if start == 1 and (message.author.mention == discord.Permissions.administrator 
-    or message.author.id in private_key.admin) :
+    if start == 1 :
         subprocess.run(["docker-compose","-f",
                     s+ '/docker-compose.yaml',
                     "up","-d"]) 
@@ -385,6 +381,7 @@ async def minecraft_withlist(message,uuid:str,*,name:str):
             file_data = json.load(file)
 
         add = {"uuid": uuid,"name": name}
+        if 
         file_data.append(add)
         with open(s + '/data/whitelist.json', 'w') as file:
             json.dump(file_data,file)
@@ -395,6 +392,7 @@ async def minecraft_withlist(message,uuid:str,*,name:str):
         await message.channel.send("player added") 
     else:
         await message.channel.send("not allowed")
+
 
 @client.command()
 async def minecraft_list(message,name:str): 
@@ -428,6 +426,7 @@ async def minecraft_exec(message,*,command:str):
         await message.channel.send("command executed")
     else:
         await message.channel.send("not allowed")
+
 
 @client.command()
 async def minecraft_update(message): 
@@ -476,19 +475,22 @@ def is_zip_file(file_path):
     except zipfile.BadZipFile:
        return False
 
+
 @client.command()
 async def minecraft_map(message,version:str,website:str,end:str): #write word on image
     if (((message.author.mention == discord.Permissions.administrator)
          or message.author.id in private_key.admin)  
-        and website in private_key.allow_website):
+        or website in private_key.allow_website):
         s =  private_key.path + "mincraft-" + str(message.guild.id)
         subprocess.run(["docker-compose","-f",
                     s + '/docker-compose.yaml',
                     "down"])
         subprocess.run(["rm","-rf", s + '/data/world' ])
         await message.channel.send("server stop")
+        
         with open(s +"/docker-compose.yaml", 'r') as file:
             prime_service = yaml.safe_load(file)
+        
         if prime_service == None:
             dockerconfig(s,version)
         else:
@@ -498,6 +500,7 @@ async def minecraft_map(message,version:str,website:str,end:str): #write word on
 
         subprocess.run(['wget','-t','20','https://www.' + website +"/"+ end
                        ,'-O',s + '/file.zip'])
+        
         if is_zip_file(s + '/file.zip'):
             await message.channel.send("download succes")
             subprocess.run(["mkdir", s + '/data/world'])
@@ -515,7 +518,7 @@ async def minecraft_map(message,version:str,website:str,end:str): #write word on
             await message.channel.send("data for server setup")
         else:
             await message.channel.send("error download")
-            await message.channel.send("download the file on your pc before retry command")
+            await message.channel.send("downloaded file is not a zip file for minecraft")
 
     else:
         await message.channel.send("not allowed or bad website")
