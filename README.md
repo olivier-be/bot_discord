@@ -1,7 +1,7 @@
 # bot_discord 
 
-This bot uses openai to reply,, <br />
-This bot uses docker-compose to make a mincraft server,, <br />
+This bot uses openai to reply, <br />
+This bot uses docker-compose to make a mincraft server, <br />
 
 I've made a small game use openai to benefit for this feature <br />
 
@@ -58,26 +58,26 @@ add your user id the admin list
 
 # mincraft server 
   1 set up docker-compse<br />
-    ```!minecraft_setup  WHITELIST(false) ALLOW_HACK_ACCOUNT(false) VERSION(ex:1.20.5) ``` set up mincraft directory for the acteur discord server <br />
+    ```!minecraft_setup  WHITELIST(false) ALLOW_HACK_ACCOUNT(false) VERSION(ex:1.20.5) ``` set up mincraft directory for the acteur discord server <br /><br />
   2 start server <br />
-    ```!minecraft 1``` start the server<br />
+    ```!minecraft 1``` start the server<br /><br />
   3 install map (skip if you want VANILLA)<br />
     for https://www.minecraftmaps.com/game-maps/minigames-world<br />
     in private_key.py : allow_website = ['minecraftmaps.com']<br />
     after a change in the website use filebin to store map to to get a link for install it
     use<br />
-    ```!minecraft_map VERSION(ex :"1.20.2")" "allow_website(ex:"minecraftmaps.com") "END OF LINK(game-maps/minigames-  world/download-map")``` <br />
+    ```!minecraft_map VERSION(ex :"1.20.2")" "allow_website(ex:"minecraftmaps.com") "END OF LINK(game-maps/minigames-  world/download-map")``` <br /><br />
   4 add admin to mincraft <br />
-    ```!minecraft_op uuid(ex:234;lkj4h2lkj3h) name(ex:name)``` add op to ops.json
+    ```!minecraft_op uuid(ex:234;lkj4h2lkj3h) name(ex:name)``` add op to ops.json<br /><br />
   5 restart server <br />
     ```!minecraft 0``` stop the server<br />
-    ```!minecraft 1``` start the server<br />
+    ```!minecraft 1``` start the server<br /><br />
   6 get status <br />
-    ```!minecraft_status``` sent data logs <br />
+    ```!minecraft_status``` sent data logs <br /><br />
   7 remove file for a server <br />
-    ```!minecraft_remove```
-  8 exec on serv 
-  ```!minecraft_exec rcon-cli command(op testplayer)```
+    ```!minecraft_remove``` <br /><br />
+  8 exec on serv  <br />
+  ```!minecraft_exec rcon-cli command(op testplayer)```<br />
 
 # service info 
 
