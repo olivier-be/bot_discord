@@ -381,7 +381,6 @@ async def minecraft_withlist(message,uuid:str,*,name:str):
             file_data = json.load(file)
 
         add = {"uuid": uuid,"name": name}
-        if 
         file_data.append(add)
         with open(s + '/data/whitelist.json', 'w') as file:
             json.dump(file_data,file)
