@@ -1,0 +1,16 @@
+services:
+  minecraft-server:
+    environment:
+      ENABLE_COMMAND_BLOCK: 'TRUE'
+      EULA: 'TRUE'
+      MEMORY: 5G
+      VERSION: '1.21'
+      WHITELIST: 'TRUE'
+    image: itzg/minecraft-server
+    ports:
+    - 25565:25565
+    stdin_open: 'true'
+    tty: 'true'
+    volumes:
+    - ./data:/data
+
