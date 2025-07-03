@@ -5,4 +5,4 @@ discord_key = ""
 path = getcwd() + '/' #for default path
 admin = [] # bot admin
 allow_website = [] #allow website for mincraft map
-
+curseforge_api_key = ""
