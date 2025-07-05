@@ -221,8 +221,7 @@ async def minecraft_setup(message,is_whitelist,is_crack,*,version:str):
     else:
         await message.channel.send("demand to bot admin for setup the server")
 
-
-def dockerconfig_mod(s ,version,is_whitelist,is_crack,link):
+def dockerconfig_mod(s ,is_whitelist,is_crack,link):
     data = {};
     with open(path + "/mod-mincraft.yml") as stream:
         data = yaml.safe_load(stream)
@@ -230,24 +229,24 @@ def dockerconfig_mod(s ,version,is_whitelist,is_crack,link):
         data['services']['minecraft-server']['environment']['WHITELIST'] = "TRUE"
     if is_crack == "true":
         data['services']['minecraft-server']['environment']['ONLINE_MODE'] = "FALSE"
-    data['services']['minecraft-server']['environment']['CF_API_KEY'] = curseforge_api_key;
-    data['services']['minecraft-server']['environment']['CF_PAGE_URL'] = link
+    data['services']['minecraft-server']['environment']['CF_API_KEY'] = private_key.curseforge_api_key.replace("$", "$$")
+    data['services']['minecraft-server']['environment']['CF_SERVER_MOD'] = link
     with open(s + '/docker-compose.yaml', 'w') as file:
          yaml.dump(data, file)
 
 
 
 
+
 @client.command()
-async def minecraft_setup_mod(message,is_whitelist,is_crack,version:str,*,link:str): 
+async def minecraft_setup_mod(message,is_whitelist,is_crack,*,link:str): 
     if message.author.id in private_key.admin or message.author.mention == discord.Permissions.administrator:
         s =  private_key.path + "mincraft-" + str(message.guild.id)
         subprocess.run(["mkdir", s])
-        dockerconfig_mod(s,version,is_whitelist,is_crack,link)
+        dockerconfig_mod(s,is_whitelist,is_crack,link)
         await message.channel.send("data for server setup")
     else:
         await message.channel.send("demand to bot admin for setup the server")
-
 
 
 @client.command() 
