@@ -3,10 +3,7 @@ services:
     environment:
       EULA: 'true'
       TYPE: AUTO_CURSEFORGE
-      CF_IGNORE_MISSING_FILES: |
-         mods/iris-*.jar
-         mods/sodium-*.jar
-         mods/figura-*.jar
+      CF_IGNORE_MISSING_FILES: mods/iris-*.jar,mods/sodium-*.jar,mods/figura-*.jar,mods/figura-0.1.5+1.21.1-neoforge-mc.jar
       MEMORY: 15G
       ENABLE_COMMAND_BLOCK: 'TRUE'
     image: itzg/minecraft-server

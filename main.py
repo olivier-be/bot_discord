@@ -232,10 +232,21 @@ def dockerconfig_mod(s ,is_whitelist,is_crack,link):
         data['services']['minecraft-server']['environment']['ONLINE_MODE'] = "FALSE"
     data['services']['minecraft-server']['environment']['CF_API_KEY'] = private_key.curseforge_api_key.replace("$", "$$")
     data['services']['minecraft-server']['environment']['CF_PAGE_URL'] = link
+    data['services']['minecraft-server']['environment']["CF_DOWNLOADS_REPO"] = "/downloads"
     with open(s + '/docker-compose.yaml', 'w') as file:
-         yaml.dump(data, file)
+         yaml.dump(data, file,default_flow_style=False)
 
-
+@client.command()
+async def dockerconfig_add_port(message ,port):
+    if message.author.id in private_key.admin or message.author.mention == discord.Permissions.administrator: 
+        s =  private_key.path + "mincraft-" + str(message.guild.id)
+        data = {};
+        with open(s + '/docker-compose.yaml') as stream:
+            data = yaml.safe_load(stream)
+        data['services']['minecraft-server']['ports'].append(port + ":" + port)
+        with open(s + '/docker-compose.yaml', 'w') as file:
+            yaml.dump(data, file,default_flow_style=False)
+        await message.channel.send("port add to server")
 
 
 
@@ -251,12 +262,6 @@ async def minecraft_setup_mod(message,is_whitelist,is_crack,*,link:str):
         await message.channel.send("demand to bot admin for setup the server")
 
 def dl_mod(s,link:str):
-    data = {};
-    with open(s + "/docker-compose.yaml") as stream:
-        data = yaml.safe_load(stream)
-    data['services']['minecraft-server']['environment']["CF_DOWNLOADS_REPO"] = "/downloads"
-    with open(s + '/docker-compose.yaml', 'w') as file:
-         yaml.dump(data, file)
     subprocess.run(['wget','-t','20',link,'--directory-prefix='+s + "/downloads"])
     subprocess.run(['chmod','777','-R',s + "/downloads"]) 
 
