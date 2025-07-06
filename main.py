@@ -13,6 +13,7 @@ import json
 import zipfile
 import os
 import shutil
+import glob
 
 path =  private_key.path
 config = configparser.ConfigParser()
@@ -230,7 +231,7 @@ def dockerconfig_mod(s ,is_whitelist,is_crack,link):
     if is_crack == "true":
         data['services']['minecraft-server']['environment']['ONLINE_MODE'] = "FALSE"
     data['services']['minecraft-server']['environment']['CF_API_KEY'] = private_key.curseforge_api_key.replace("$", "$$")
-    data['services']['minecraft-server']['environment']['CF_SERVER_MOD'] = link
+    data['services']['minecraft-server']['environment']['CF_PAGE_URL'] = link
     with open(s + '/docker-compose.yaml', 'w') as file:
          yaml.dump(data, file)
 
@@ -243,10 +244,32 @@ async def minecraft_setup_mod(message,is_whitelist,is_crack,*,link:str):
     if message.author.id in private_key.admin or message.author.mention == discord.Permissions.administrator:
         s =  private_key.path + "mincraft-" + str(message.guild.id)
         subprocess.run(["mkdir", s])
+        subprocess.run(["mkdir", s + "/downloads"])
         dockerconfig_mod(s,is_whitelist,is_crack,link)
         await message.channel.send("data for server setup")
     else:
         await message.channel.send("demand to bot admin for setup the server")
+
+def dl_mod(s,link:str):
+    data = {};
+    with open(s + "/docker-compose.yaml") as stream:
+        data = yaml.safe_load(stream)
+    data['services']['minecraft-server']['environment']["CF_DOWNLOADS_REPO"] = "/downloads"
+    with open(s + '/docker-compose.yaml', 'w') as file:
+         yaml.dump(data, file)
+    subprocess.run(['wget','-t','20',link,'--directory-prefix='+s + "/downloads"])
+    subprocess.run(['chmod','777','-R',s + "/downloads"]) 
+
+@client.command()
+async def minecraft_set_modpack_zip(message,*,link:str): 
+    if message.author.id in private_key.admin or message.author.mention == discord.Permissions.administrator:
+        s =  private_key.path + "mincraft-" + str(message.guild.id)
+        dl_mod(s,link)
+        await message.channel.send("data for server setup")
+    else:
+        await message.channel.send("demand to bot admin for setup the server")
+
+
 
 
 @client.command() 
@@ -260,6 +283,19 @@ async def minecraft_remove(message):
         await message.channel.send("data for server remove")
     else:
         await message.channel.send("demand to bot admin for setup the server")
+
+@client.command() 
+async def minecraft_add_missing_mod_zip(message,link): 
+    if message.author.id in private_key.admin:
+        s =  private_key.path + "mincraft-" + str(message.guild.id)
+        subprocess.run(['wget','-t','20',link,'-O',s + "/file.zip"])
+        await zip_file(message,s ,s+"/data/mods/")
+        subprocess.run(['chmod','777','-R',s + "/data/mods/"]) 
+        await message.channel.send("data for server remove")
+    else:
+        await message.channel.send("demand to bot admin for setup the server")
+
+
 
 
 @client.command() 
@@ -275,13 +311,27 @@ async def minecraft_reset(message):
         await message.channel.send("demand to bot admin for setup the server")
 
 
+def remove_file_glob(file):
+    pos = file
+    patterns = ["iris-*.jar", "sodium-*.jar", "figura-*.jar"]
+    files_to_delete = []
+
+    for pattern in patterns:
+        files_to_delete.extend(glob.glob(os.path.join(pos, pattern)))
+
+    # Only delete if matching files exist
+    if files_to_delete:
+        subprocess.run(["rm"] + files_to_delete)
+    else:
+        print("No matching files found.") 
 
 @client.command() 
 async def minecraft(message,start:int): 
     #if ctx.author.username == "furious": 
-
+    
     s =  private_key.path + "mincraft-" + str(message.guild.id)
     if start == 1 :
+        remove_file_glob(s+ "/data/mods/")
         subprocess.run(["docker-compose","-f",
                     s+ '/docker-compose.yaml',
                     "up","-d"]) 
@@ -419,25 +469,25 @@ def is_zip_file(file_path):
     except zipfile.BadZipFile:
        return False
 
-async def zip_file(s):
+async def zip_file(m,s,output):
     if is_zip_file(s + '/file.zip'):
-        await message.channel.send("download succes")
+        await m.channel.send("download succes")
         subprocess.run(["mkdir", s + '/data/world'])
         subprocess.run(['mv',s + '/data/ops.json',s + "/"])
         subprocess.run(["mkdir", s + '/temp' ])  
         subprocess.run(['unzip','-o',
                     s + '/file.zip','-d',s + '/temp'])
         subprocess.run(["chmod","-R","777",s + '/data'])
-        move_files(s + '/temp', s + '/data/world')
+        move_files(s + '/temp', output)
         subprocess.run(['mv',s + '/ops.json',s + '/data/ops.json']) 
-        await message.channel.send("extrated and move world")
+        await m.channel.send("extrated and move file")
         subprocess.run(['chown','-R','opc:opc',s + '/data'])
         subprocess.run(["rm","-rf", s + '/file.zip' ])
         subprocess.run(["rm","-rf", s + '/temp' ])
-        await message.channel.send("data for server setup")
+        await m.channel.send("data for server setup")
     else:
-        await message.channel.send("error download")
-        await message.channel.send("downloaded file is not a zip file for minecraft")
+        await m.channel.send("error download")
+        await m.channel.send("downloaded file is not a zip file for minecraft")
 
 
 @client.command()
@@ -464,7 +514,7 @@ async def minecraft_map(message,version:str,website:str,end:str): #write word on
 
         subprocess.run(['wget','-t','20','https://www.' + website +"/"+ end
                        ,'-O',s + '/file.zip'])
-        zipfile(s)
+        await zip_file(message,s,s + '/data/world')
     else:
         await message.channel.send("not allowed or bad website")
 
